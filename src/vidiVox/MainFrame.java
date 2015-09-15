@@ -9,6 +9,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JButton;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.awt.event.ActionEvent;
 import javax.swing.ImageIcon;
 import java.awt.SystemColor;
@@ -124,6 +125,7 @@ public class MainFrame extends JFrame {
 		btnOpen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//Open button clicked
+				File chosenFile = Tools.openFile();
 				
 			}
 		});
