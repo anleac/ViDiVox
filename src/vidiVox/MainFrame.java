@@ -6,6 +6,13 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
+import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
+import uk.co.caprica.vlcj.discovery.NativeDiscovery;
+import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
+import uk.co.caprica.vlcj.player.media.Media;
+import uk.co.caprica.vlcj.player.media.callback.seekable.RandomAccessFileMedia;
+
 import javax.swing.JButton;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
@@ -19,6 +26,8 @@ import javax.swing.JToolBar;
 public class MainFrame extends JFrame {
 
 	private JPanel contentPane;
+	private final EmbeddedMediaPlayer theVideo = Tools.getMediaPlayerComponent().getMediaPlayer();
+	private boolean videoLoaded = false;
 
 	/**
 	 * Launch the application.
@@ -27,6 +36,8 @@ public class MainFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					NativeDiscovery nd = new NativeDiscovery();
+					nd.discover();
 					MainFrame frame = new MainFrame();
 					frame.setVisible(true);
 				} catch (Exception e) {
@@ -60,7 +71,11 @@ public class MainFrame extends JFrame {
 		btnPlay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//Play button clicked
-				
+				if (videoLoaded){
+				theVideo.play();
+				} else {
+					Tools.displayError("You need to open something to play first!");
+				}
 			}
 		});
 		bottomRowButtonsPanel.add(btnPlay);
@@ -71,6 +86,8 @@ public class MainFrame extends JFrame {
 		btnPause.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//Pause button clicked
+				
+				theVideo.pause();
 				
 			}
 		});
@@ -126,6 +143,11 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				//Open button clicked
 				File chosenFile = Tools.openFile();
+				if (chosenFile != null){
+				String mediaPath = chosenFile.getAbsolutePath();
+				theVideo.prepareMedia(mediaPath);
+				videoLoaded = true;
+				} 
 				
 			}
 		});
@@ -137,13 +159,12 @@ public class MainFrame extends JFrame {
 		btnCommentary.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//Commentary button clicked
-				
+				System.out.println(System.getProperty("sun.arch.data.model"));
 			}
 		});
 		topRowButtonsPanel.add(btnCommentary);
-		
-		JPanel mediaPlayerPanel = new JPanel();
-		contentPane.add(mediaPlayerPanel, BorderLayout.CENTER);
+		final EmbeddedMediaPlayer video = Tools.getMediaPlayerComponent().getMediaPlayer();
+		contentPane.add(Tools.getMediaPlayerComponent(), BorderLayout.CENTER);
 	}
 
 }
