@@ -55,7 +55,7 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		setTitle("ViDiVox");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 511, 336);
+		setBounds(100, 100, 600, 400);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -73,6 +73,7 @@ public class MainFrame extends JFrame {
 				//Play button clicked
 				if (videoLoaded){
 				theVideo.play();
+				theVideo.setRate(1.0f);
 				} else {
 					Tools.displayError("You need to open something to play first!");
 				}
@@ -86,9 +87,7 @@ public class MainFrame extends JFrame {
 		btnPause.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//Pause button clicked
-				
 				theVideo.pause();
-				
 			}
 		});
 		bottomRowButtonsPanel.add(btnPause);
@@ -99,7 +98,8 @@ public class MainFrame extends JFrame {
 		btnFastforward.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//Fast forward button clicked
-				
+				//Continuously? fast forward until play button clicked
+				theVideo.setRate(3.0f);
 			}
 		});
 		bottomRowButtonsPanel.add(btnFastforward);
