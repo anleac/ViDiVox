@@ -6,7 +6,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
-import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 /*
  * A class for arbitrary methods.

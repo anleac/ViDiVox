@@ -7,22 +7,17 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
-import uk.co.caprica.vlcj.player.media.Media;
-import uk.co.caprica.vlcj.player.media.callback.seekable.RandomAccessFileMedia;
-
 import javax.swing.JButton;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.awt.event.ActionEvent;
 import javax.swing.ImageIcon;
-import java.awt.SystemColor;
 import java.awt.Color;
-import javax.swing.JToolBar;
 
+@SuppressWarnings("serial")
 public class MainFrame extends JFrame {
 
 	private JPanel contentPane;
@@ -36,6 +31,7 @@ public class MainFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					
 					NativeDiscovery nd = new NativeDiscovery();
 					nd.discover();
 					MainFrame frame = new MainFrame();
@@ -49,7 +45,8 @@ public class MainFrame extends JFrame {
 
 	/**
 	 * Create the frame.
-	 * Button icons retrieved from: http://www.tdcurran.com/sites/tdcurran/images/user/Icons-in-iOS-8/audio-controls.png
+	 * Button icons retrieved from: 
+	 * http://www.tdcurran.com/sites/tdcurran/images/user/Icons-in-iOS-8/audio-controls.png
 	 * on 15/09/15 at 11:41 a.m
 	 */
 	public MainFrame() {
@@ -71,6 +68,7 @@ public class MainFrame extends JFrame {
 		btnPlay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//Play button clicked
+			
 				if (videoLoaded){
 				theVideo.play();
 				theVideo.setRate(1.0f);
@@ -111,16 +109,19 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				//Reverse button clicked
 				
+				
 			}
 		});
+		
 		bottomRowButtonsPanel.add(btnReverse);
 		
 		JButton btnStop = new JButton("Stop");
 		btnStop.setBackground(Color.WHITE);
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//Stop button clicked
+				//Stop button clicked 
 				
+				theVideo.stop();
 			}
 		});
 		bottomRowButtonsPanel.add(btnStop);
@@ -159,11 +160,23 @@ public class MainFrame extends JFrame {
 		btnCommentary.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//Commentary button clicked
-				System.out.println(System.getProperty("sun.arch.data.model"));
+				
 			}
 		});
 		topRowButtonsPanel.add(btnCommentary);
-		final EmbeddedMediaPlayer video = Tools.getMediaPlayerComponent().getMediaPlayer();
+		
+		JButton btnAudio = new JButton("Add Audio");
+		btnAudio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//Audio button clicked
+				File audioFile = Tools.openFile();
+				String audioFilePath = audioFile.getAbsolutePath();
+				
+				
+			}
+		});
+		btnAudio.setBackground(Color.WHITE);
+		topRowButtonsPanel.add(btnAudio);
 		contentPane.add(Tools.getMediaPlayerComponent(), BorderLayout.CENTER);
 	}
 
