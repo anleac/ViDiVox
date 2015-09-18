@@ -49,7 +49,7 @@ public class Tools {
 	
 	public static void addCustomAudio(File audioFile){
 		//Is forced to be mp3 from file chooser
-		String audioFilePath = audioFile.getAbsolutePath();
+		//Brief says audio is to be automatically added to beginning of video
 		
 		
 		
