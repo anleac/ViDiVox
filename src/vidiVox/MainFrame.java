@@ -160,7 +160,7 @@ public class MainFrame extends JFrame {
 		btnCommentary.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//Commentary button clicked
-				
+				CommentaryFrame.cmFrame.setVisible(true);
 			}
 		});
 		topRowButtonsPanel.add(btnCommentary);

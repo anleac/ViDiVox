@@ -11,6 +11,7 @@ import javax.swing.border.EmptyBorder;
 public class CommentaryFrame extends JFrame {
 
 	private JPanel contentPane;
+	public static CommentaryFrame cmFrame = new CommentaryFrame();
 
 	/**
 	 * Launch the application.
