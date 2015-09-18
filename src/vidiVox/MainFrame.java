@@ -170,10 +170,10 @@ public class MainFrame extends JFrame {
 		btnAudio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//Audio button clicked
-				File audioFile = Tools.openFile();
-				String audioFilePath = audioFile.getAbsolutePath();
-				
-				
+				File audioFile = Tools.openMP3File();
+				if (audioFile != null){
+				Tools.addCustomAudio(audioFile);
+				}
 			}
 		});
 		btnAudio.setBackground(Color.WHITE);

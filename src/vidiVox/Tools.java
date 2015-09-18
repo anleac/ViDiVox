@@ -4,6 +4,8 @@ import java.io.File;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 
@@ -43,6 +45,31 @@ public class Tools {
 	
 	public static void displayError(String msg){
 		JOptionPane.showMessageDialog(null, msg, "Error", JOptionPane.ERROR_MESSAGE);
+	}
+	
+	public static void addCustomAudio(File audioFile){
+		//Is forced to be mp3 from file chooser
+		String audioFilePath = audioFile.getAbsolutePath();
+		
+		
+		
+	}
+	
+	public static File openMP3File(){
+		JFileChooser jfc = new JFileChooser();
+		if(lastDir != null){
+		jfc.setCurrentDirectory(lastDir);
+		}
+		//Same as other file chooser, but only allows mp3 files
+		FileFilter ff = new FileNameExtensionFilter("MP3 File", "mp3");
+		jfc.setFileFilter(ff);
+		jfc.showOpenDialog(null);
+		File f = jfc.getSelectedFile();
+		if (f != null){
+		lastDir = f.getParentFile();
+		}
+		return f;
+		
 	}
 	
 
