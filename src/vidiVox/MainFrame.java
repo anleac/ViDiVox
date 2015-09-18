@@ -12,10 +12,17 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import javax.swing.JButton;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.io.File;
 import java.awt.event.ActionEvent;
 import javax.swing.ImageIcon;
 import java.awt.Color;
+import java.awt.Dimension;
+
+import javax.swing.SwingConstants;
+import javax.swing.JSlider;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
@@ -55,17 +62,32 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		setTitle("ViDiVox");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 600, 400);
+		setBounds(100, 100, 634, 444);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
 		
 		JPanel bottomRowButtonsPanel = new JPanel();
+		bottomRowButtonsPanel.setPreferredSize(new Dimension(this.getWidth(), 70));
 		contentPane.add(bottomRowButtonsPanel, BorderLayout.SOUTH);
-		bottomRowButtonsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		bottomRowButtonsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+	
+		
+		final JSlider slider = new JSlider();
+		slider.setValue(0);
+		slider.setPreferredSize(new Dimension(this.getWidth() - 20, 20));
+		bottomRowButtonsPanel.add(slider);
+		
+		addComponentListener(new ComponentAdapter() { //to keep the slider at full width when the window resizes
+		    public void componentResized(ComponentEvent e) {
+		    	slider.setPreferredSize(new Dimension(getWidth() - 20, 20));           
+		    }
+		});
+	
 		
 		final JButton btnPlay = new JButton(""); //Removed text, testing.
+		btnPlay.setHorizontalAlignment(SwingConstants.LEFT);
 		btnPlay.setBackground(Color.WHITE);
 		btnPlay.setIcon(new ImageIcon(MainFrame.class.getResource("/vidiVox/play.jpg")));
 		btnPlay.addActionListener(new ActionListener() {
@@ -87,7 +109,9 @@ public class MainFrame extends JFrame {
 				}
 			}
 		});
+		
 		bottomRowButtonsPanel.add(btnPlay);
+
 		
 		JButton btnStop = new JButton("Stop");
 		btnStop.setBackground(Color.WHITE);
