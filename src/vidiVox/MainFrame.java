@@ -24,6 +24,8 @@ public class MainFrame extends JFrame {
 	private final EmbeddedMediaPlayer theVideo = Tools.getMediaPlayerComponent().getMediaPlayer();
 	private boolean videoLoaded = false;
 
+	//hi
+	
 	/**
 	 * Launch the application.
 	 */
@@ -96,7 +98,7 @@ public class MainFrame extends JFrame {
 		btnFastforward.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//Fast forward button clicked
-				//Continuously? fast forward until play button clicked
+				//Continuously fast forward until play button clicked
 				theVideo.setRate(3.0f);
 			}
 		});
