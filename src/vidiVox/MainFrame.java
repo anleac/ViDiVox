@@ -21,6 +21,7 @@ import java.awt.Color;
 public class MainFrame extends JFrame {
 
 	private JPanel contentPane;
+	public static MainFrame mFrame = new MainFrame();
 	private final EmbeddedMediaPlayer theVideo = Tools.getMediaPlayerComponent().getMediaPlayer();
 	private boolean videoLoaded = false;
 	
@@ -36,9 +37,8 @@ public class MainFrame extends JFrame {
 					
 					NativeDiscovery nd = new NativeDiscovery();
 					nd.discover();
-					MainFrame frame = new MainFrame();
-					frame.setLocationRelativeTo(null); //centre screen
-					frame.setVisible(true);
+					mFrame.setLocationRelativeTo(null); //centre screen
+					mFrame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -150,7 +150,6 @@ public class MainFrame extends JFrame {
 				theVideo.prepareMedia(mediaPath);
 				videoLoaded = true;
 				} 
-				
 			}
 		});
 		topRowButtonsPanel.add(btnOpen);

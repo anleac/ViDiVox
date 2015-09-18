@@ -12,6 +12,7 @@ import javax.swing.JTextArea;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.Color;
 
 @SuppressWarnings("serial")
 public class CommentaryFrame extends JFrame {
@@ -27,8 +28,7 @@ public class CommentaryFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					CommentaryFrame frame = new CommentaryFrame();
-					frame.setVisible(true);
+					cmFrame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -54,9 +54,11 @@ public class CommentaryFrame extends JFrame {
 		
 		//Preview button plays text through festival
 		JButton btnPreview = new JButton("Preview");
+		btnPreview.setBackground(Color.WHITE);
 		btnPreview.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//Preview button clicked
+				String textToPreview = textField.getText();
 				
 			}
 		});
@@ -64,9 +66,14 @@ public class CommentaryFrame extends JFrame {
 		
 		//Button returns to mainFrame without saving
 		JButton btnBack = new JButton("Back");
+		btnBack.setBackground(Color.WHITE);
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//Back button clicked
+				//MainFrame was never set to invisible
+				//Simply hide this current frame
+				cmFrame.setVisible(false);
+				MainFrame.mFrame.requestFocus();
 				
 			}
 		});
@@ -74,9 +81,11 @@ public class CommentaryFrame extends JFrame {
 		
 		//Button for saving synth speech as MP3 file
 		JButton btnSave = new JButton("Save");
+		btnSave.setBackground(Color.WHITE);
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//Save button clicked
+				String textToSave = textField.getText();
 				
 			}
 		});
