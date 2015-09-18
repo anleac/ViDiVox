@@ -24,7 +24,7 @@ public class MainFrame extends JFrame {
 	private final EmbeddedMediaPlayer theVideo = Tools.getMediaPlayerComponent().getMediaPlayer();
 	private boolean videoLoaded = false;
 
-	//hi
+	//s $ x
 	
 	/**
 	 * Launch the application.
