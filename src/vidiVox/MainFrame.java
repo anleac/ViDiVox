@@ -49,6 +49,7 @@ public class MainFrame extends JFrame {
 					nd.discover();
 					mFrame.setLocationRelativeTo(null); //centre screen
 					mFrame.setVisible(true);
+					IOHandler.CheckPaths();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -70,27 +71,32 @@ public class MainFrame extends JFrame {
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
+		//Yo Nick, I've moved all your top button functionality into the menu items.
+		
 		JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
 		
 		JMenuItem mntmOpenAVideo = new JMenuItem("Open a video");
 		mnFile.add(mntmOpenAVideo);
 		
-		JMenuItem mntmSaveCurrentVideo = new JMenuItem("Save current video");
-		mntmSaveCurrentVideo.setEnabled(false);
+		final JMenuItem mntmSaveCurrentVideo = new JMenuItem("Save current video");
+		mntmSaveCurrentVideo.setEnabled(false); //no video loaded yet to save
 		mnFile.add(mntmSaveCurrentVideo);
 		
 		JMenuItem mntmCloseProgram = new JMenuItem("Close program");
 		mnFile.add(mntmCloseProgram);
 		
-		JMenu mnAddAudioOverlay = new JMenu("Add");
+		JMenu mnAddAudioOverlay = new JMenu("Audio Overlay");
 		menuBar.add(mnAddAudioOverlay);
 		
-		JMenuItem mntmAudio = new JMenuItem("Audio");
+		JMenuItem mntmAudio = new JMenuItem("Add Audio");
 		mnAddAudioOverlay.add(mntmAudio);
 		
-		JMenuItem mntmCommentary = new JMenuItem("Commentary");
+		JMenuItem mntmCommentary = new JMenuItem("Add Commentary");
 		mnAddAudioOverlay.add(mntmCommentary);
+		
+		JMenuItem mntmClearAll = new JMenuItem("Clear All");
+		mnAddAudioOverlay.add(mntmClearAll);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
