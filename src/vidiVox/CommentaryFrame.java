@@ -64,6 +64,15 @@ public class CommentaryFrame extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				//Preview button clicked
 				String textToPreview = textField.getText();
+				int numWords = textToPreview.split(" ").length;
+			//Brief says to limit max number of words to between 20-40
+				if (numWords > 30){
+					//Too many words
+					Tools.displayError("Number of words should be less than 30");
+				} else {
+					//Good amount of words
+					
+				}
 				
 			}
 		});
