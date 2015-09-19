@@ -31,7 +31,7 @@ import javax.swing.JMenuItem;
 public class MainFrame extends JFrame {
 
 	private JPanel contentPane;
-	public static MainFrame mFrame = new MainFrame();
+	public static MainFrame mFrame;
 	private final EmbeddedMediaPlayer theVideo = Tools.getMediaPlayerComponent().getMediaPlayer();
 	private boolean videoLoaded = false;
 	
@@ -47,6 +47,7 @@ public class MainFrame extends JFrame {
 					
 					NativeDiscovery nd = new NativeDiscovery();
 					nd.discover();
+					mFrame = new MainFrame();
 					mFrame.setLocationRelativeTo(null); //centre screen
 					mFrame.setVisible(true);
 					IOHandler.CheckPaths();
