@@ -129,6 +129,7 @@ public class MainFrame extends JFrame {
 		mntmCommentary.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				//Commentary button clicked
+				CommentaryFrame.cmFrame.setLocationRelativeTo(null);
 				CommentaryFrame.cmFrame.setVisible(true);
 			}
 		});

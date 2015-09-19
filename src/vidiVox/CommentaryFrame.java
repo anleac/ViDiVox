@@ -7,19 +7,21 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
+import javax.swing.JLabel;
 
 @SuppressWarnings("serial")
 public class CommentaryFrame extends JFrame {
 
 	private JPanel contentPane;
 	public static CommentaryFrame cmFrame = new CommentaryFrame();
-	private JTextField textField;
+	private JTextArea textField;
 
 	/**
 	 * Launch the application.
@@ -29,6 +31,7 @@ public class CommentaryFrame extends JFrame {
 			public void run() {
 				try {
 					cmFrame.setVisible(true);
+					cmFrame.setLocationRelativeTo(null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -42,18 +45,20 @@ public class CommentaryFrame extends JFrame {
 	public CommentaryFrame() {
 		setTitle("Add Commentary");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 459, 246);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
+		contentPane.setLayout(null);
 		
-		textField = new JTextField();
-		contentPane.add(textField, BorderLayout.NORTH);
-		textField.setColumns(10);
+		textField = new JTextArea();
+		textField.setLineWrap(true);
+		textField.setBounds(12, 22, 432, 134);
+		contentPane.add(textField);
 		
 		//Preview button plays text through festival
 		JButton btnPreview = new JButton("Preview");
+		btnPreview.setBounds(15, 168, 133, 25);
 		btnPreview.setBackground(Color.WHITE);
 		btnPreview.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -62,10 +67,11 @@ public class CommentaryFrame extends JFrame {
 				
 			}
 		});
-		contentPane.add(btnPreview, BorderLayout.CENTER);
+		contentPane.add(btnPreview);
 		
 		//Button returns to mainFrame without saving
-		JButton btnBack = new JButton("Back");
+		JButton btnBack = new JButton("Cancel");
+		btnBack.setBounds(311, 168, 133, 25);
 		btnBack.setBackground(Color.WHITE);
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -77,10 +83,11 @@ public class CommentaryFrame extends JFrame {
 				
 			}
 		});
-		contentPane.add(btnBack, BorderLayout.SOUTH);
+		contentPane.add(btnBack);
 		
 		//Button for saving synth speech as MP3 file
 		JButton btnSave = new JButton("Save");
+		btnSave.setBounds(160, 170, 139, 21);
 		btnSave.setBackground(Color.WHITE);
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -89,7 +96,10 @@ public class CommentaryFrame extends JFrame {
 				
 			}
 		});
-		contentPane.add(btnSave, BorderLayout.WEST);
+		contentPane.add(btnSave);
+		
+		JLabel lblWriteTextBelow = new JLabel("Write text below to add to your video");
+		lblWriteTextBelow.setBounds(12, 0, 287, 15);
+		contentPane.add(lblWriteTextBelow);
 	}
-
 }
