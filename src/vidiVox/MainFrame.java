@@ -23,6 +23,9 @@ import java.awt.Dimension;
 
 import javax.swing.SwingConstants;
 import javax.swing.JSlider;
+import javax.swing.JMenuBar;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
@@ -63,6 +66,31 @@ public class MainFrame extends JFrame {
 		setTitle("ViDiVox");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 634, 444);
+		
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+		
+		JMenu mnFile = new JMenu("File");
+		menuBar.add(mnFile);
+		
+		JMenuItem mntmOpenAVideo = new JMenuItem("Open a video");
+		mnFile.add(mntmOpenAVideo);
+		
+		JMenuItem mntmSaveCurrentVideo = new JMenuItem("Save current video");
+		mntmSaveCurrentVideo.setEnabled(false);
+		mnFile.add(mntmSaveCurrentVideo);
+		
+		JMenuItem mntmCloseProgram = new JMenuItem("Close program");
+		mnFile.add(mntmCloseProgram);
+		
+		JMenu mnAddAudioOverlay = new JMenu("Add");
+		menuBar.add(mnAddAudioOverlay);
+		
+		JMenuItem mntmAudio = new JMenuItem("Audio");
+		mnAddAudioOverlay.add(mntmAudio);
+		
+		JMenuItem mntmCommentary = new JMenuItem("Commentary");
+		mnAddAudioOverlay.add(mntmCommentary);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
