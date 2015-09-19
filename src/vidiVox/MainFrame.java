@@ -76,31 +76,76 @@ public class MainFrame extends JFrame {
 		JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
 		
-		JMenuItem mntmOpenAVideo = new JMenuItem("Open a video");
-		mnFile.add(mntmOpenAVideo);
-		
 		final JMenuItem mntmSaveCurrentVideo = new JMenuItem("Save current video");
 		mntmSaveCurrentVideo.setEnabled(false); //no video loaded yet to save
+		mntmSaveCurrentVideo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//Save button clicked
+				
+			}
+		});	
+		
+		JMenuItem mntmOpenAVideo = new JMenuItem("Open a video");
+		mntmOpenAVideo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//Open button clicked
+				File chosenFile = Tools.openFile();
+				if (chosenFile != null){
+					String mediaPath = chosenFile.getAbsolutePath();
+					theVideo.prepareMedia(mediaPath);
+					videoLoaded = true;
+					mntmSaveCurrentVideo.setEnabled(true); //can now save with a video loaded
+				} 
+			}
+		});
+		mnFile.add(mntmOpenAVideo);
+		
 		mnFile.add(mntmSaveCurrentVideo);
 		
 		JMenuItem mntmCloseProgram = new JMenuItem("Close program");
+		mntmCloseProgram.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
 		mnFile.add(mntmCloseProgram);
 		
 		JMenu mnAddAudioOverlay = new JMenu("Audio Overlay");
 		menuBar.add(mnAddAudioOverlay);
 		
 		JMenuItem mntmAudio = new JMenuItem("Add Audio");
+		mntmAudio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//Audio button clicked
+				File audioFile = Tools.openMP3File();
+				if (audioFile != null){
+				Tools.addCustomAudio(audioFile);
+				}
+			}
+		});
 		mnAddAudioOverlay.add(mntmAudio);
 		
 		JMenuItem mntmCommentary = new JMenuItem("Add Commentary");
+		mntmCommentary.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//Commentary button clicked
+				CommentaryFrame.cmFrame.setVisible(true);
+			}
+		});
 		mnAddAudioOverlay.add(mntmCommentary);
 		
 		JMenuItem mntmClearAll = new JMenuItem("Clear All");
 		mnAddAudioOverlay.add(mntmClearAll);
+		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
+		
+		JPanel topRowButtonsPanel = new JPanel();
+		contentPane.add(topRowButtonsPanel, BorderLayout.NORTH);
+
+		contentPane.add(Tools.getMediaPlayerComponent(), BorderLayout.CENTER);
 		
 		JPanel bottomRowButtonsPanel = new JPanel();
 		bottomRowButtonsPanel.setPreferredSize(new Dimension(this.getWidth(), 70));
@@ -185,57 +230,6 @@ public class MainFrame extends JFrame {
 		});
 		bottomRowButtonsPanel.add(btnFastforward);
 		
-		JPanel topRowButtonsPanel = new JPanel();
-		contentPane.add(topRowButtonsPanel, BorderLayout.NORTH);
-		
-		JButton btnSave = new JButton("Save");
-		btnSave.setBackground(Color.WHITE);
-		btnSave.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//Save button clicked
-				
-			}
-		});
-		
-		JButton btnOpen = new JButton("Open");
-		btnOpen.setBackground(Color.WHITE);
-		btnOpen.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//Open button clicked
-				File chosenFile = Tools.openFile();
-				if (chosenFile != null){
-				String mediaPath = chosenFile.getAbsolutePath();
-				theVideo.prepareMedia(mediaPath);
-				videoLoaded = true;
-				} 
-			}
-		});
-		topRowButtonsPanel.add(btnOpen);
-		topRowButtonsPanel.add(btnSave);
-		
-		JButton btnCommentary = new JButton("Commentary");
-		btnCommentary.setBackground(Color.WHITE);
-		btnCommentary.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				//Commentary button clicked
-				CommentaryFrame.cmFrame.setVisible(true);
-			}
-		});
-		topRowButtonsPanel.add(btnCommentary);
-		
-		JButton btnAudio = new JButton("Add Audio");
-		btnAudio.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				//Audio button clicked
-				File audioFile = Tools.openMP3File();
-				if (audioFile != null){
-				Tools.addCustomAudio(audioFile);
-				}
-			}
-		});
-		btnAudio.setBackground(Color.WHITE);
-		topRowButtonsPanel.add(btnAudio);
-		contentPane.add(Tools.getMediaPlayerComponent(), BorderLayout.CENTER);
 	}
 
 }
