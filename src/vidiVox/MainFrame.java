@@ -66,7 +66,12 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		setTitle("ViDiVox");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 634, 444);
+		setBounds(100, 100, 634, 444);	
+		
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		setContentPane(contentPane);
+		contentPane.setLayout(new BorderLayout(0, 0));
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -137,11 +142,6 @@ public class MainFrame extends JFrame {
 		
 		JMenuItem mntmClearAll = new JMenuItem("Clear All");
 		mnAddAudioOverlay.add(mntmClearAll);
-		
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(new BorderLayout(0, 0));
 		
 		JPanel topRowButtonsPanel = new JPanel();
 		contentPane.add(topRowButtonsPanel, BorderLayout.NORTH);

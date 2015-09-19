@@ -107,8 +107,8 @@ public class CommentaryFrame extends JFrame {
 		});
 		contentPane.add(btnSave);
 		
-		JLabel lblWriteTextBelow = new JLabel("Write text below to add to your video");
-		lblWriteTextBelow.setBounds(12, 0, 287, 15);
+		JLabel lblWriteTextBelow = new JLabel("Write text below to add to your video (30 word limit)");
+		lblWriteTextBelow.setBounds(12, 0, 378, 15);
 		contentPane.add(lblWriteTextBelow);
 	}
 }
