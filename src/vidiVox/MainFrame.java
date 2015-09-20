@@ -55,6 +55,7 @@ public class MainFrame extends JFrame {
 					mFrame = new MainFrame();
 					mFrame.setLocationRelativeTo(null); //centre screen
 					mFrame.setVisible(true);
+					mFrame.setMinimumSize(new Dimension(mFrame.getWidth(), mFrame.getHeight())); //set min dimension to current
 					IOHandler.CheckPaths();
 				} catch (Exception e) {
 					e.printStackTrace();
