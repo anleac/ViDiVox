@@ -17,8 +17,11 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.File;
 import java.awt.event.ActionEvent;
+
+import javax.swing.Box;
 import javax.swing.ImageIcon;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 
 import javax.swing.SwingConstants;
@@ -34,6 +37,8 @@ public class MainFrame extends JFrame {
 	public static MainFrame mFrame;
 	private final EmbeddedMediaPlayer theVideo = Tools.getMediaPlayerComponent().getMediaPlayer();
 	private boolean videoLoaded = false;
+	
+	private Component volalignment; // this is a 'hack' for flayouts, which will creates the volume button being 'pushed' to the right
 	
 	private boolean videoPlaying = false; // this is to toggle the pause/play button and keep track of state
 	
@@ -67,7 +72,7 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		setTitle("ViDiVox");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 634, 444);	
+		setBounds(100, 100, 703, 486);	
 		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -185,6 +190,7 @@ public class MainFrame extends JFrame {
 		
 		addComponentListener(new ComponentAdapter() { //to keep the slider at full width when the window resizes
 		    public void componentResized(ComponentEvent e) {
+		    	volalignment.setPreferredSize(new Dimension(getWidth() - 580, 1)); 
 		    	slider.setPreferredSize(new Dimension(getWidth() - 20, 20));           
 		    }
 		});
@@ -231,6 +237,15 @@ public class MainFrame extends JFrame {
 			}
 		});
 		bottomRowButtonsPanel.add(btnFastforward);
+    	volalignment = Box.createHorizontalStrut(getWidth() - 580);
+		JButton btnVolume = new JButton("Vol");
+		btnVolume.setBackground(Color.WHITE);
+		bottomRowButtonsPanel.add(volalignment);
+		bottomRowButtonsPanel.add(btnVolume);
+		
+		JSlider volSlider = new JSlider();
+		volSlider.setValue(100);
+		bottomRowButtonsPanel.add(volSlider);
 		
 	}
 
