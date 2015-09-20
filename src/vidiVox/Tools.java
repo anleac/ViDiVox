@@ -1,6 +1,7 @@
 package vidiVox;
 
 import java.io.File;
+import java.io.IOException;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -69,6 +70,20 @@ public class Tools {
 		lastDir = f.getParentFile();
 		}
 		return f;
+		
+	}
+	
+	public static void speakFestival(String textToSay){
+		
+		String cmd = "echo "+"\""+textToSay+"\" | festival --tts";
+		System.out.println(cmd);
+		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", cmd);
+		try {
+			Process process = pb.start();
+		} catch (IOException e) {
+			displayError("Error using festival speech");
+		}
+		
 		
 	}
 	

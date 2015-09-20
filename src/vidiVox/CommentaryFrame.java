@@ -71,7 +71,7 @@ public class CommentaryFrame extends JFrame {
 					Tools.displayError("Number of words should be less than 30");
 				} else {
 					//Good amount of words
-					
+					Tools.speakFestival(textToPreview);
 				}
 				
 			}

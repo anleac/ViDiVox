@@ -82,7 +82,6 @@ public class MainFrame extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
-		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
@@ -180,7 +179,8 @@ public class MainFrame extends JFrame {
 		mnAddAudioOverlay.add(mntmClearAll);
 		
 		JPanel videoPanel = new JPanel();
-		contentPane.add(videoPanel, BorderLayout.CENTER);
+		videoPanel.add(Tools.getMediaPlayerComponent());
+		
 		contentPane.add(Tools.getMediaPlayerComponent(), BorderLayout.CENTER);
 		
 		JPanel northPanel = new JPanel();
