@@ -102,7 +102,7 @@ public class CommentaryFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				//Save button clicked
 				String textToSave = textField.getText();
-				
+				Tools.saveFestToMP3(textToSave);
 			}
 		});
 		contentPane.add(btnSave);

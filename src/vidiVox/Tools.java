@@ -2,6 +2,7 @@ package vidiVox;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -83,6 +84,49 @@ public class Tools {
 		} catch (IOException e) {
 			displayError("Error using festival speech");
 		}
+
+	}
+	
+	public static void writeTextToFile(String text, String fileName){
+		PrintWriter pw = null;
+		try{
+		pw = new PrintWriter(IOHandler.Mp3Directory+fileName);
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+		pw.write(text);
+		pw.close();
+		
+	}
+	
+	public static void saveFestToMP3(String textToSave){
+		IOHandler.CheckPaths();
+		String wavFullPath = IOHandler.Mp3Directory+"output.wav";
+		String tmpTxtFullPath = IOHandler.Mp3Directory+"txtTmp.txt";
+		String mp3FullPath = IOHandler.Mp3Directory+"output2.mp3";
+		writeTextToFile(textToSave, "txtTmp.txt");
+		String cmd1 = "text2wave -o "+wavFullPath+" "+tmpTxtFullPath;
+		String cmd2 = "ffmpeg -i "+wavFullPath+" "+mp3FullPath;
+		System.out.println(cmd1);
+		System.out.println(cmd2);
+		ProcessBuilder pb1 = new ProcessBuilder("/bin/bash", "-c", cmd1);
+		ProcessBuilder pb2 = new ProcessBuilder("/bin/bash", "-c", cmd2);
+		try {
+			Process process1 = pb1.start();
+			process1.waitFor();
+			Process process2 = pb2.start();
+		} catch (Exception e) {
+			displayError("Error saving speech to MP3");
+		}
+		//deleting intermediate files (output.wav and txtTmp)
+		File f1 = new File(tmpTxtFullPath);
+		File f2 = new File(wavFullPath);
+		f1.delete();
+		f2.delete();
+		File outputMP3 = new File(mp3FullPath);
+		displayInfo("MP3 file saved to \n"+outputMP3.getAbsolutePath());
+		
+		
 		
 		
 	}
