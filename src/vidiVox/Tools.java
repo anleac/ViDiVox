@@ -33,6 +33,20 @@ public class Tools {
 		
 	}
 	
+	
+	//displays the time in a nice format, no in milliseconds
+	public static String LongToTime(long length){
+		length = length / 1000; //as was in ms, get it down to seconds
+		String toReturn = "";
+		int minutes = (int) (length / 60);
+		int seconds = (int) (length % 60);
+		if (minutes - 10 < 0) toReturn += "0";
+		toReturn += minutes + ":";
+		if (seconds - 10 < 0) toReturn += "0";
+		toReturn += seconds;
+		return toReturn;
+	}
+	
 	public static EmbeddedMediaPlayerComponent getMediaPlayerComponent(){
 		if (mediaPlayerComponent == null){
 		mediaPlayerComponent = new EmbeddedMediaPlayerComponent();

@@ -27,10 +27,12 @@ import java.awt.Component;
 import java.awt.Dimension;
 
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 import javax.swing.JSlider;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JLabel;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
@@ -39,12 +41,17 @@ public class MainFrame extends JFrame {
 	public static MainFrame mFrame;
 	private final EmbeddedMediaPlayer theVideo = Tools.getMediaPlayerComponent().getMediaPlayer();
 	private boolean videoLoaded = false;
-	
-	private Component volalignment; // this is a 'hack' for flayouts, which will creates the volume button being 'pushed' to the right
-	
-	private boolean videoPlaying = false; // this is to toggle the pause/play button and keep track of state
-	private boolean isMuted = false; //for the audio controller
-	
+
+	private Component volalignment, timealignment; // this is a 'hack' for
+													// flayouts, which will
+													// creates the volume button
+													// being 'pushed' to the
+													// right
+
+	private boolean videoPlaying = false; // this is to toggle the pause/play
+											// button and keep track of state
+	private boolean isMuted = false; // for the audio controller
+
 	/**
 	 * Launch the application.
 	 */
@@ -52,13 +59,17 @@ public class MainFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					
+
 					NativeDiscovery nd = new NativeDiscovery();
 					nd.discover();
 					mFrame = new MainFrame();
-					mFrame.setLocationRelativeTo(null); //centre screen
+					mFrame.setLocationRelativeTo(null); // centre screen
 					mFrame.setVisible(true);
-					mFrame.setMinimumSize(new Dimension(mFrame.getWidth(), mFrame.getHeight())); //set min dimension to current
+					mFrame.setMinimumSize(new Dimension(mFrame.getWidth(), mFrame.getHeight())); // set
+																									// min
+																									// dimension
+																									// to
+																									// current
 					IOHandler.CheckPaths();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -68,46 +79,50 @@ public class MainFrame extends JFrame {
 	}
 
 	/**
-	 * Create the frame.
-	 * Button icons retrieved from: 
-	 * http://www.tdcurran.com/sites/tdcurran/images/user/Icons-in-iOS-8/audio-controls.png
-	 * on 15/09/15 at 11:41 a.m
+	 * Create the frame. Button icons retrieved from:
+	 * http://www.tdcurran.com/sites/tdcurran/images/user/Icons-in-iOS-8/audio-
+	 * controls.png on 15/09/15 at 11:41 a.m
 	 */
 	public MainFrame() {
 		setTitle("ViDiVox");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 703, 486);	
-		
+		setBounds(100, 100, 705, 496);
+
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
 		JMenuBar menuBar = new JMenuBar();
-		menuBar.setMinimumSize(new Dimension(getWidth(), menuBar.getHeight())); //set min dimension to current
+		menuBar.setMinimumSize(new Dimension(getWidth(), menuBar.getHeight())); // set
+																				// min
+																				// dimension
+																				// to
+																				// current
 		setJMenuBar(menuBar);
-		
+
+		final JLabel currentTime = new JLabel("00:00"), lengthTime = new JLabel("00:00");
+
 		JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
-		
+
 		final JMenuItem mntmSaveCurrentVideo = new JMenuItem("Save current video");
-		mntmSaveCurrentVideo.setEnabled(false); //no video loaded yet to save
+		mntmSaveCurrentVideo.setEnabled(false); // no video loaded yet to save
 		mntmSaveCurrentVideo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//Save button clicked
-				
+				// Save button clicked
+
 			}
-		});	
-		
-		
-		final JButton btnPlay = new JButton(""); //Removed text, testing.
+		});
+
+		final JButton btnPlay = new JButton(""); // Removed text, testing.
 		btnPlay.setHorizontalAlignment(SwingConstants.LEFT);
 		btnPlay.setBackground(Color.WHITE);
 		btnPlay.setIcon(new ImageIcon(MainFrame.class.getResource("/vidiVox/play.jpg")));
 		btnPlay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//Play/Pause button clicked
-				if (!videoPlaying){ //was paused or stopped
-					if (videoLoaded){
+				// Play/Pause button clicked
+				if (!videoPlaying) { // was paused or stopped
+					if (videoLoaded) {
 						theVideo.play();
 						theVideo.setRate(1.0f);
 						videoPlaying = true;
@@ -115,32 +130,34 @@ public class MainFrame extends JFrame {
 					} else {
 						Tools.displayError("You need to open something to play first!");
 					}
-				}else{ //was playing, so pause it
+				} else { // was playing, so pause it
 					theVideo.pause();
-					videoPlaying = false; //paused;
+					videoPlaying = false; // paused;
 					btnPlay.setIcon(new ImageIcon(MainFrame.class.getResource("/vidiVox/play.jpg")));
 				}
 			}
 		});
-		
+
 		JMenuItem mntmOpenAVideo = new JMenuItem("Open a video");
 		mntmOpenAVideo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//Open button clicked
+				// Open button clicked
 				File chosenFile = Tools.openFile();
-				if (chosenFile != null){
+				if (chosenFile != null) {
 					String mediaPath = chosenFile.getAbsolutePath();
 					theVideo.prepareMedia(mediaPath);
 					videoLoaded = true;
-					if (!videoPlaying) btnPlay.doClick();
-					mntmSaveCurrentVideo.setEnabled(true); //can now save with a video loaded
-				} 
+					if (!videoPlaying)
+						btnPlay.doClick();
+					mntmSaveCurrentVideo.setEnabled(true); // can now save with
+															// a video loaded
+				}
 			}
 		});
 		mnFile.add(mntmOpenAVideo);
-		
+
 		mnFile.add(mntmSaveCurrentVideo);
-		
+
 		JMenuItem mntmCloseProgram = new JMenuItem("Close program");
 		mntmCloseProgram.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -148,155 +165,200 @@ public class MainFrame extends JFrame {
 			}
 		});
 		mnFile.add(mntmCloseProgram);
-		
+
 		JMenu mnAddAudioOverlay = new JMenu("Audio Overlay");
 		menuBar.add(mnAddAudioOverlay);
-		
+
 		JMenuItem mntmAudio = new JMenuItem("Add Audio");
 		mntmAudio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//Audio button clicked
+				// Audio button clicked
 				File audioFile = Tools.openMP3File();
-				if (audioFile != null){
-				Tools.addCustomAudio(audioFile);
+				if (audioFile != null) {
+					Tools.addCustomAudio(audioFile);
 				}
 			}
 		});
 		mnAddAudioOverlay.add(mntmAudio);
-		
+
 		JMenuItem mntmCommentary = new JMenuItem("Add Commentary");
 		mntmCommentary.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//Commentary button clicked
+				// Commentary button clicked
 				CommentaryFrame.cmFrame.setLocationRelativeTo(null);
 				CommentaryFrame.cmFrame.setVisible(true);
 			}
 		});
 		mnAddAudioOverlay.add(mntmCommentary);
-		
+
 		JMenuItem mntmClearAll = new JMenuItem("Clear All");
 		mnAddAudioOverlay.add(mntmClearAll);
-		
+
 		JPanel videoPanel = new JPanel();
 		videoPanel.add(Tools.getMediaPlayerComponent());
-		
+
 		contentPane.add(Tools.getMediaPlayerComponent(), BorderLayout.CENTER);
-		
+
 		JPanel northPanel = new JPanel();
 		contentPane.add(northPanel, BorderLayout.NORTH);
-		
+
 		JPanel bottomRowButtonsPanel = new JPanel();
-		bottomRowButtonsPanel.setPreferredSize(new Dimension(this.getWidth(), 70));
+		bottomRowButtonsPanel.setPreferredSize(new Dimension(this.getWidth(), 85));
 		contentPane.add(bottomRowButtonsPanel, BorderLayout.SOUTH);
 		bottomRowButtonsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
-	
-		
+
 		final JSlider slider = new JSlider();
 		slider.setValue(0);
 		slider.setPreferredSize(new Dimension(this.getWidth() - 20, 20));
-		bottomRowButtonsPanel.add(slider);
-		
-		addComponentListener(new ComponentAdapter() { //to keep the slider at full width when the window resizes
-		    public void componentResized(ComponentEvent e) {
-		    	volalignment.setPreferredSize(new Dimension(getWidth() - 580, 1)); 
-		    	slider.setPreferredSize(new Dimension(getWidth() - 20, 20));           
-		    }
+		slider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent evt) {
+				JSlider slider = (JSlider) evt.getSource();
+				int value = slider.getValue();
+				//theVideo.setPosition((float)value);
+			}
 		});
-	
+		bottomRowButtonsPanel.add(slider);
 
-		
+		addComponentListener(new ComponentAdapter() { // to keep the slider at
+														// full width when the
+														// window resizes
+			public void componentResized(ComponentEvent e) {
+				volalignment.setPreferredSize(new Dimension(getWidth() - 580, 1));
+				timealignment.setPreferredSize(new Dimension(getWidth() - 115, 1));
+				slider.setPreferredSize(new Dimension(getWidth() - 20, 20));
+			}
+		});
+
+		bottomRowButtonsPanel.add(currentTime);
+
+		timealignment = Box.createHorizontalStrut(getWidth() - 115);
+
+		bottomRowButtonsPanel.add(timealignment);
+		bottomRowButtonsPanel.add(lengthTime);
+
 		bottomRowButtonsPanel.add(btnPlay);
 		bottomRowButtonsPanel.add(Box.createHorizontalStrut(25));
-		
-		
+
 		JButton btnStop = new JButton("");
 		btnStop.setActionCommand("");
-   		btnStop.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/vidiVox/stop.png"))).getImage()).getScaledInstance(16,16, java.awt.Image.SCALE_SMOOTH)));
+		btnStop.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/vidiVox/stop.png"))).getImage())
+				.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
 		btnStop.setBackground(Color.WHITE);
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//Stop button clicked 
-				
+				// Stop button clicked
+
 				theVideo.stop();
 			}
 		});
-		
+
 		JButton btnReverse = new JButton("");
 		btnReverse.setIcon(new ImageIcon(MainFrame.class.getResource("/vidiVox/rev.jpg")));
 		btnReverse.setBackground(Color.WHITE);
 		btnReverse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//Reverse button clicked
-				
-				
+				// Reverse button clicked
+
 			}
 		});
-		
+
 		bottomRowButtonsPanel.add(btnReverse);
 		bottomRowButtonsPanel.add(btnStop);
-		
-		//btnPause has been removed, and merged into btnPlay.
-		
+
+		// btnPause has been removed, and merged into btnPlay.
+
 		JButton btnFastforward = new JButton("");
 		btnFastforward.setIcon(new ImageIcon(MainFrame.class.getResource("/vidiVox/ff.jpg")));
 		btnFastforward.setBackground(Color.WHITE);
 		btnFastforward.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				//Fast forward button clicked
-				//Continuously fast forward until play button clicked
+				// Fast forward button clicked
+				// Continuously fast forward until play button clicked
 				theVideo.setRate(3.0f);
 			}
 		}); //
 		bottomRowButtonsPanel.add(btnFastforward);
-    	volalignment = Box.createHorizontalStrut(getWidth() - 580);
+		volalignment = Box.createHorizontalStrut(getWidth() - 580);
 		final JButton btnVolume = new JButton("");
 		btnVolume.setBackground(Color.WHITE);
-		btnVolume.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/vidiVox/volume.png"))).getImage()).getScaledInstance(16,16, java.awt.Image.SCALE_SMOOTH)));
+		btnVolume.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/vidiVox/volume.png"))).getImage())
+				.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
 		bottomRowButtonsPanel.add(volalignment);
 		bottomRowButtonsPanel.add(btnVolume);
-		
+
 		final JSlider volSlider = new JSlider();
 		volSlider.setValue(100);
 		volSlider.addChangeListener(new ChangeListener() {
-		      public void stateChanged(ChangeEvent evt) {
-		        JSlider slider = (JSlider) evt.getSource();
-		          int value = slider.getValue();
-		          //value here
-		          if (value == 0){
-		      		btnVolume.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/vidiVox/muted.png"))).getImage()).getScaledInstance(16,16, java.awt.Image.SCALE_SMOOTH)));
-		          }else if (value < 50){
-		      		btnVolume.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/vidiVox/volumelow.png"))).getImage()).getScaledInstance(16,16, java.awt.Image.SCALE_SMOOTH)));
-		          }else{
-		      		btnVolume.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/vidiVox/volume.png"))).getImage()).getScaledInstance(16,16, java.awt.Image.SCALE_SMOOTH)));
-		          }
-		          theVideo.setVolume(value);
-		      }
+			public void stateChanged(ChangeEvent evt) {
+				JSlider slider = (JSlider) evt.getSource();
+				int value = slider.getValue();
+				// value here
+				if (value == 0) {
+					btnVolume.setIcon(new ImageIcon(
+							((new ImageIcon(MainFrame.class.getResource("/vidiVox/muted.png"))).getImage())
+									.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
+				} else if (value < 50) {
+					btnVolume.setIcon(new ImageIcon(
+							((new ImageIcon(MainFrame.class.getResource("/vidiVox/volumelow.png"))).getImage())
+									.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
+				} else {
+					btnVolume.setIcon(new ImageIcon(
+							((new ImageIcon(MainFrame.class.getResource("/vidiVox/volume.png"))).getImage())
+									.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
+				}
+				theVideo.setVolume(value);
+			}
 		});
-		
+
 		btnVolume.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if (isMuted){
+				if (isMuted) {
 					int value = volSlider.getValue();
-					if (value == 0){
-			      		btnVolume.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/vidiVox/muted.png"))).getImage()).getScaledInstance(16,16, java.awt.Image.SCALE_SMOOTH)));
-			          }else if (value < 50){
-			      		btnVolume.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/vidiVox/volumelow.png"))).getImage()).getScaledInstance(16,16, java.awt.Image.SCALE_SMOOTH)));
-			          }else{
-			      		btnVolume.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/vidiVox/volume.png"))).getImage()).getScaledInstance(16,16, java.awt.Image.SCALE_SMOOTH)));
-			         }
-					volSlider.setEnabled(true); //cant change volume anymore
+					if (value == 0) {
+						btnVolume.setIcon(new ImageIcon(
+								((new ImageIcon(MainFrame.class.getResource("/vidiVox/muted.png"))).getImage())
+										.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
+					} else if (value < 50) {
+						btnVolume.setIcon(new ImageIcon(
+								((new ImageIcon(MainFrame.class.getResource("/vidiVox/volumelow.png"))).getImage())
+										.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
+					} else {
+						btnVolume.setIcon(new ImageIcon(
+								((new ImageIcon(MainFrame.class.getResource("/vidiVox/volume.png"))).getImage())
+										.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
+					}
+					volSlider.setEnabled(true); // cant change volume anymore
 					isMuted = false;
-				}else{
-		      		btnVolume.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/vidiVox/muted.png"))).getImage()).getScaledInstance(16,16, java.awt.Image.SCALE_SMOOTH)));
-					isMuted = true; //toggle the mute..
-					volSlider.setEnabled(false); //can change again!
+				} else {
+					btnVolume.setIcon(new ImageIcon(
+							((new ImageIcon(MainFrame.class.getResource("/vidiVox/muted.png"))).getImage())
+									.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
+					isMuted = true; // toggle the mute..
+					volSlider.setEnabled(false); // can change again!
 				}
 				theVideo.mute(isMuted);
 			}
 		});
-		
+
 		bottomRowButtonsPanel.add(volSlider);
-		
+
+		Timer t = new Timer(200, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				if (videoLoaded) {
+					currentTime.setText(Tools.LongToTime(theVideo.getTime()));
+					lengthTime.setText(Tools.LongToTime(theVideo.getMediaMeta().getLength()));
+					if (theVideo.getMediaMeta().getLength() > 0) {
+						int iPos = (int)Math.floor((((float)((float)theVideo.getTime() / (float)theVideo.getMediaMeta().getLength())) * 100.0));
+						slider.setValue(iPos);
+						slider.setMaximum((int)(theVideo.getMediaMeta().getLength() / 1000));
+					}
+				}
+			}
+		});
+
+		t.start();
+
 	}
 
 }
