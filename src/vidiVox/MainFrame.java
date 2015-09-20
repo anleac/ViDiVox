@@ -6,6 +6,8 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
@@ -41,6 +43,7 @@ public class MainFrame extends JFrame {
 	private Component volalignment; // this is a 'hack' for flayouts, which will creates the volume button being 'pushed' to the right
 	
 	private boolean videoPlaying = false; // this is to toggle the pause/play button and keep track of state
+	private boolean isMuted = false; //for the audio controller
 	
 	/**
 	 * Launch the application.
@@ -236,16 +239,55 @@ public class MainFrame extends JFrame {
 				//Continuously fast forward until play button clicked
 				theVideo.setRate(3.0f);
 			}
-		});
+		}); //
 		bottomRowButtonsPanel.add(btnFastforward);
     	volalignment = Box.createHorizontalStrut(getWidth() - 580);
-		JButton btnVolume = new JButton("Vol");
+		final JButton btnVolume = new JButton("");
 		btnVolume.setBackground(Color.WHITE);
+		btnVolume.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/vidiVox/volume.png"))).getImage()).getScaledInstance(16,16, java.awt.Image.SCALE_SMOOTH)));
 		bottomRowButtonsPanel.add(volalignment);
 		bottomRowButtonsPanel.add(btnVolume);
 		
-		JSlider volSlider = new JSlider();
+		final JSlider volSlider = new JSlider();
 		volSlider.setValue(100);
+		volSlider.addChangeListener(new ChangeListener() {
+		      public void stateChanged(ChangeEvent evt) {
+		        JSlider slider = (JSlider) evt.getSource();
+		          int value = slider.getValue();
+		          //value here
+		          if (value == 0){
+		      		btnVolume.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/vidiVox/muted.png"))).getImage()).getScaledInstance(16,16, java.awt.Image.SCALE_SMOOTH)));
+		          }else if (value < 50){
+		      		btnVolume.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/vidiVox/volumelow.png"))).getImage()).getScaledInstance(16,16, java.awt.Image.SCALE_SMOOTH)));
+		          }else{
+		      		btnVolume.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/vidiVox/volume.png"))).getImage()).getScaledInstance(16,16, java.awt.Image.SCALE_SMOOTH)));
+		          }
+		          theVideo.setVolume(value);
+		      }
+		});
+		
+		btnVolume.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (isMuted){
+					int value = volSlider.getValue();
+					if (value == 0){
+			      		btnVolume.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/vidiVox/muted.png"))).getImage()).getScaledInstance(16,16, java.awt.Image.SCALE_SMOOTH)));
+			          }else if (value < 50){
+			      		btnVolume.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/vidiVox/volumelow.png"))).getImage()).getScaledInstance(16,16, java.awt.Image.SCALE_SMOOTH)));
+			          }else{
+			      		btnVolume.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/vidiVox/volume.png"))).getImage()).getScaledInstance(16,16, java.awt.Image.SCALE_SMOOTH)));
+			         }
+					volSlider.setEnabled(true); //cant change volume anymore
+					isMuted = false;
+				}else{
+		      		btnVolume.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/vidiVox/muted.png"))).getImage()).getScaledInstance(16,16, java.awt.Image.SCALE_SMOOTH)));
+					isMuted = true; //toggle the mute..
+					volSlider.setEnabled(false); //can change again!
+				}
+				theVideo.mute(isMuted);
+			}
+		});
+		
 		bottomRowButtonsPanel.add(volSlider);
 		
 	}
