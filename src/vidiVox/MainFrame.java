@@ -84,9 +84,8 @@ public class MainFrame extends JFrame {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		
 		JMenuBar menuBar = new JMenuBar();
+		menuBar.setMinimumSize(new Dimension(getWidth(), menuBar.getHeight())); //set min dimension to current
 		setJMenuBar(menuBar);
-		
-		//Yo Nick, I've moved all your top button functionality into the menu items.
 		
 		JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
@@ -207,9 +206,12 @@ public class MainFrame extends JFrame {
 
 		
 		bottomRowButtonsPanel.add(btnPlay);
-
+		bottomRowButtonsPanel.add(Box.createHorizontalStrut(25));
 		
-		JButton btnStop = new JButton("Stop");
+		
+		JButton btnStop = new JButton("");
+		btnStop.setActionCommand("");
+   		btnStop.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/vidiVox/stop.png"))).getImage()).getScaledInstance(16,16, java.awt.Image.SCALE_SMOOTH)));
 		btnStop.setBackground(Color.WHITE);
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
