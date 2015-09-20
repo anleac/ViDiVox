@@ -91,6 +91,31 @@ public class MainFrame extends JFrame {
 			}
 		});	
 		
+		
+		final JButton btnPlay = new JButton(""); //Removed text, testing.
+		btnPlay.setHorizontalAlignment(SwingConstants.LEFT);
+		btnPlay.setBackground(Color.WHITE);
+		btnPlay.setIcon(new ImageIcon(MainFrame.class.getResource("/vidiVox/play.jpg")));
+		btnPlay.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				//Play/Pause button clicked
+				if (!videoPlaying){ //was paused or stopped
+					if (videoLoaded){
+						theVideo.play();
+						theVideo.setRate(1.0f);
+						videoPlaying = true;
+						btnPlay.setIcon(new ImageIcon(MainFrame.class.getResource("/vidiVox/pause.jpg")));
+					} else {
+						Tools.displayError("You need to open something to play first!");
+					}
+				}else{ //was playing, so pause it
+					theVideo.pause();
+					videoPlaying = false; //paused;
+					btnPlay.setIcon(new ImageIcon(MainFrame.class.getResource("/vidiVox/play.jpg")));
+				}
+			}
+		});
+		
 		JMenuItem mntmOpenAVideo = new JMenuItem("Open a video");
 		mntmOpenAVideo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -100,6 +125,7 @@ public class MainFrame extends JFrame {
 					String mediaPath = chosenFile.getAbsolutePath();
 					theVideo.prepareMedia(mediaPath);
 					videoLoaded = true;
+					if (!videoPlaying) btnPlay.doClick();
 					mntmSaveCurrentVideo.setEnabled(true); //can now save with a video loaded
 				} 
 			}
@@ -163,30 +189,7 @@ public class MainFrame extends JFrame {
 		    }
 		});
 	
-		
-		final JButton btnPlay = new JButton(""); //Removed text, testing.
-		btnPlay.setHorizontalAlignment(SwingConstants.LEFT);
-		btnPlay.setBackground(Color.WHITE);
-		btnPlay.setIcon(new ImageIcon(MainFrame.class.getResource("/vidiVox/play.jpg")));
-		btnPlay.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				//Play/Pause button clicked
-				if (!videoPlaying){ //was paused or stopped
-					if (videoLoaded){
-						theVideo.play();
-						theVideo.setRate(1.0f);
-						videoPlaying = true;
-						btnPlay.setIcon(new ImageIcon(MainFrame.class.getResource("/vidiVox/pause.jpg")));
-					} else {
-						Tools.displayError("You need to open something to play first!");
-					}
-				}else{ //was playing, so pause it
-					theVideo.pause();
-					videoPlaying = false; //paused;
-					btnPlay.setIcon(new ImageIcon(MainFrame.class.getResource("/vidiVox/play.jpg")));
-				}
-			}
-		});
+
 		
 		bottomRowButtonsPanel.add(btnPlay);
 
