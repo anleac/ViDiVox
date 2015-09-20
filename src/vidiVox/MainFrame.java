@@ -178,8 +178,13 @@ public class MainFrame extends JFrame {
 		
 		JMenuItem mntmClearAll = new JMenuItem("Clear All");
 		mnAddAudioOverlay.add(mntmClearAll);
-
+		
+		JPanel videoPanel = new JPanel();
+		contentPane.add(videoPanel, BorderLayout.CENTER);
 		contentPane.add(Tools.getMediaPlayerComponent(), BorderLayout.CENTER);
+		
+		JPanel northPanel = new JPanel();
+		contentPane.add(northPanel, BorderLayout.NORTH);
 		
 		JPanel bottomRowButtonsPanel = new JPanel();
 		bottomRowButtonsPanel.setPreferredSize(new Dimension(this.getWidth(), 70));
