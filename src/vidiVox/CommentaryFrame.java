@@ -71,7 +71,7 @@ public class CommentaryFrame extends JFrame {
 					Tools.displayError("Number of words should be less than 30");
 				} else {
 					//Good amount of words
-					
+					Tools.speakFestival(textToPreview);
 				}
 				
 			}
@@ -102,7 +102,7 @@ public class CommentaryFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				//Save button clicked
 				String textToSave = textField.getText();
-				
+				Tools.saveFestToMP3(textToSave);
 			}
 		});
 		contentPane.add(btnSave);
