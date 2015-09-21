@@ -119,7 +119,9 @@ public class Tools {
 		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", cmd);
 		try {
 			Process process = pb.start();
-		} catch (IOException e) {
+			CommentaryFrame.btnPreview.setText("Preview");
+			CommentaryFrame.btnIsPreview = true;
+		} catch (Exception e) {
 			displayError("Error using festival speech");
 		}
 
@@ -162,6 +164,18 @@ public class Tools {
 		File outputMP3 = new File(mp3FullPath);
 		displayInfo("MP3 file saved to \n"+outputMP3.getAbsolutePath());
 		
+	}
+	public static void killAllFestProc(){
+		
+		String cmd = "killall festival";
+		
+		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", cmd);
+		try {
+			Process process = pb.start();
+			process.waitFor();
+		} catch (Exception e) {
+			displayError("Error killing festival process");
+		}
 		
 	}
 	

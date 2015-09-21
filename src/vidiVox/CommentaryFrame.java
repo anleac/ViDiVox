@@ -22,6 +22,8 @@ public class CommentaryFrame extends JFrame {
 	private JPanel contentPane;
 	public static CommentaryFrame cmFrame = new CommentaryFrame();
 	private JTextArea textField;
+	public static JButton btnPreview;
+	public static boolean btnIsPreview = true;
 
 	/**
 	 * Launch the application.
@@ -57,7 +59,7 @@ public class CommentaryFrame extends JFrame {
 		contentPane.add(textField);
 		
 		//Preview button plays text through festival
-		JButton btnPreview = new JButton("Preview");
+		btnPreview = new JButton("Preview");
 		btnPreview.setBounds(15, 168, 133, 25);
 		btnPreview.setBackground(Color.WHITE);
 		btnPreview.addActionListener(new ActionListener() {
@@ -70,16 +72,26 @@ public class CommentaryFrame extends JFrame {
 					//Too many words
 					Tools.displayError("Number of words should be less than 30");
 				} else {
+					if (btnIsPreview){
 					//Good amount of words
+						//They want to preview the synth
+					btnPreview.setText("Cancel");
+					btnIsPreview = false;
 					Tools.speakFestival(textToPreview);
+				} else {
+					//They want to cancel the synth
+					Tools.killAllFestProc();
+					btnIsPreview = true;
+					btnPreview.setText("Preview");
 				}
+					}
 				
 			}
 		});
 		contentPane.add(btnPreview);
 		
 		//Button returns to mainFrame without saving
-		JButton btnBack = new JButton("Cancel");
+		JButton btnBack = new JButton("Back");
 		btnBack.setBounds(311, 168, 133, 25);
 		btnBack.setBackground(Color.WHITE);
 		btnBack.addActionListener(new ActionListener() {
@@ -110,5 +122,16 @@ public class CommentaryFrame extends JFrame {
 		JLabel lblWriteTextBelow = new JLabel("Write text below to add to your video (30 word limit)");
 		lblWriteTextBelow.setBounds(12, 0, 378, 15);
 		contentPane.add(lblWriteTextBelow);
+		
+		JButton btnStop = new JButton("Stop");
+		btnStop.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//Stop button clicked
+				Tools.killAllFestProc();
+			}
+		});
+		btnStop.setBackground(Color.WHITE);
+		btnStop.setBounds(25, 205, 117, 25);
+		contentPane.add(btnStop);
 	}
 }
