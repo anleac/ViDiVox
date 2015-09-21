@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -41,6 +42,7 @@ public class MainFrame extends JFrame {
 	public static MainFrame mFrame;
 	private final EmbeddedMediaPlayer theVideo = Tools.getMediaPlayerComponent().getMediaPlayer();
 	private boolean videoLoaded = false;
+	private String chosenVideoPath = null;
 
 	private Component volalignment, timealignment; // this is a 'hack' for
 													// flayouts, which will
@@ -92,6 +94,7 @@ public class MainFrame extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
+		JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 		JMenuBar menuBar = new JMenuBar();
 		menuBar.setMinimumSize(new Dimension(getWidth(), menuBar.getHeight())); // set
 																				// min
@@ -145,8 +148,12 @@ public class MainFrame extends JFrame {
 				File chosenFile = Tools.openFile();
 				if (chosenFile != null) {
 					String mediaPath = chosenFile.getAbsolutePath();
+					chosenVideoPath = mediaPath;
 					theVideo.prepareMedia(mediaPath);
 					videoLoaded = true;
+					
+					//TODO we should have some buttons disabled until now to save null handling
+					
 					if (!videoPlaying)
 						btnPlay.doClick();
 					mntmSaveCurrentVideo.setEnabled(true); // can now save with
@@ -174,8 +181,9 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				// Audio button clicked
 				File audioFile = Tools.openMP3File();
+				File videoFile = new File(chosenVideoPath);
 				if (audioFile != null) {
-					Tools.addCustomAudio(audioFile);
+					Tools.addCustomAudio(audioFile, videoFile);
 				}
 			}
 		});

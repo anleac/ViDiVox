@@ -1,7 +1,10 @@
 package vidiVox;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 
 import javax.swing.JFileChooser;
@@ -63,11 +66,32 @@ public class Tools {
 		JOptionPane.showMessageDialog(null, msg, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 	
-	public static void addCustomAudio(File audioFile){
+	public static void addCustomAudio(File audioFile, File videoFile){
 		//Is forced to be mp3 from file chooser
 		//Brief says audio is to be automatically added to beginning of video
 		
+		String mp3Path = audioFile.getAbsolutePath();
+		String videoPath = videoFile.getAbsolutePath();
+		//Just saving it in the normal save area for now
+		JFileChooser jfc = new JFileChooser();
+		jfc.showSaveDialog(null);
+		File f = jfc.getSelectedFile();
+		if (f != null){
+		String outVidPath = f.getAbsolutePath();
+		String cmd = "ffmpeg -i "+videoPath+" -i "+mp3Path+" -map 0:v -map 1:a "+outVidPath;
+		System.out.println(cmd);
+		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", cmd);
 		
+		try {
+			ProgressBarFrame.pbFrame.setVisible(true);
+			Process process = pb.start();
+			process.waitFor();
+			ProgressBarFrame.pbFrame.setVisible(false);
+			displayInfo("Done!");
+		} catch (Exception e) {
+			displayError("Error adding audio to video");
+		}
+		}
 		
 	}
 	
@@ -121,8 +145,6 @@ public class Tools {
 		writeTextToFile(textToSave, "txtTmp.txt");
 		String cmd1 = "text2wave -o "+wavFullPath+" "+tmpTxtFullPath;
 		String cmd2 = "ffmpeg -i "+wavFullPath+" "+mp3FullPath;
-		System.out.println(cmd1);
-		System.out.println(cmd2);
 		ProcessBuilder pb1 = new ProcessBuilder("/bin/bash", "-c", cmd1);
 		ProcessBuilder pb2 = new ProcessBuilder("/bin/bash", "-c", cmd2);
 		try {
@@ -141,9 +163,6 @@ public class Tools {
 		displayInfo("MP3 file saved to \n"+outputMP3.getAbsolutePath());
 		
 		
-		
-		
 	}
 	
-
 }
