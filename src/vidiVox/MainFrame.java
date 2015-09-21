@@ -46,7 +46,7 @@ public class MainFrame extends JFrame {
 	private float videoPlayRate = 1.0f;
 	public String chosenVideoPath = null;
 
-	private Component volalignment, timealignment; // this is a 'hack' for
+	private Component volalignment, timealignment, audioalignment; // this is a 'hack' for
 													// flayouts, which will
 													// creates the volume button
 													// being 'pushed' to the
@@ -91,7 +91,7 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		setTitle("ViDiVox");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 705, 496);
+		setBounds(100, 100, 708, 557);
 
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -215,7 +215,31 @@ public class MainFrame extends JFrame {
 		contentPane.add(Tools.getMediaPlayerComponent(), BorderLayout.CENTER);
 
 		JPanel northPanel = new JPanel();
+		northPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
+		northPanel.setPreferredSize(new Dimension(getWidth(), 57));
+		
 		contentPane.add(northPanel, BorderLayout.NORTH);
+		
+		JLabel lblAudioOverlayOptions = new JLabel("Audio Overlay Options:");
+		northPanel.add(lblAudioOverlayOptions);
+		
+		audioalignment = Box.createHorizontalStrut(getWidth() - 200);
+		northPanel.add(audioalignment);
+		
+		JButton btnAddAudio = new JButton("Add audio");
+		btnAddAudio.setHorizontalAlignment(SwingConstants.LEFT);
+		btnAddAudio.setBackground(Color.WHITE);
+		northPanel.add(btnAddAudio);
+		
+		JButton btnAddCommentary = new JButton("Add commentary");
+		btnAddCommentary.setHorizontalAlignment(SwingConstants.LEFT);
+		btnAddCommentary.setBackground(Color.WHITE);
+		northPanel.add(btnAddCommentary);
+		
+		JButton btnRemoveAllOverlay = new JButton("Remove all overlay");
+		btnRemoveAllOverlay.setHorizontalAlignment(SwingConstants.LEFT);
+		btnRemoveAllOverlay.setBackground(Color.WHITE);
+		northPanel.add(btnRemoveAllOverlay);
 
 		JPanel bottomRowButtonsPanel = new JPanel();
 		bottomRowButtonsPanel.setPreferredSize(new Dimension(this.getWidth(), 85));
@@ -242,6 +266,7 @@ public class MainFrame extends JFrame {
 			public void componentResized(ComponentEvent e) {
 				volalignment.setPreferredSize(new Dimension(getWidth() - 580, 1));
 				timealignment.setPreferredSize(new Dimension(getWidth() - 295, 1));
+				audioalignment.setPreferredSize(new Dimension(getWidth() - 200, 1));
 				slider.setPreferredSize(new Dimension(getWidth() - 20, 20));
 			}
 		});
