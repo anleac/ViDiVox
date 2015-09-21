@@ -1,9 +1,6 @@
 package vidiVox;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 
 /**
  * A simple class which is used to handle all the file IO.

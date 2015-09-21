@@ -120,7 +120,7 @@ public class Tools {
 		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", cmd);
 
 		try {
-			Process process = pb.start();
+			pb.start();
 			CommentaryFrame.btnPreview.setText("Preview");
 			CommentaryFrame.btnIsPreview = true;
 		} catch (Exception e) {
@@ -158,7 +158,7 @@ public class Tools {
 		try {
 			Process process1 = pb1.start();
 			process1.waitFor();
-			Process process2 = pb2.start();
+			pb2.start();
 		} catch (Exception e) {
 			displayError("Error saving speech to MP3");
 		}
@@ -169,12 +169,17 @@ public class Tools {
 		f1.delete();
 		f2.delete();
 		File outputMP3 = new File(mp3FullPath);
-		File currentVideo = new File(MainFrame.mFrame.chosenVideoPath);
+		String vidPath = MainFrame.mFrame.chosenVideoPath;
 		displayInfo("MP3 file saved to \n" + outputMP3.getAbsolutePath());
 		if(CommentaryFrame.chckbxApplyThisSpeech.isSelected()){
 			//Checkbox is selected upon save button click
-			addCustomAudio(outputMP3, currentVideo);
+			if (vidPath != null){
+				File videoFile = new File(vidPath);
+			addCustomAudio(outputMP3, videoFile);
+		} else {
+			displayError("You need a video opened first");
 		}
+			}
 
 	}
 
