@@ -1,6 +1,5 @@
 package vidiVox;
 
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -9,6 +8,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JProgressBar;
 import javax.swing.JLabel;
 
+@SuppressWarnings("serial")
 public class ProgressBarFrame extends JFrame {
 
 	private JPanel contentPane;
@@ -37,20 +37,20 @@ public class ProgressBarFrame extends JFrame {
 		setTitle("Working...");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 204, 73);
+		setBounds(100, 100, 239, 73);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
 		progressBar = new JProgressBar();
-		progressBar.setBounds(12, 29, 180, 20);
+		progressBar.setBounds(22, 41, 180, 20);
 		
 		contentPane.add(progressBar);
 		progressBar.setIndeterminate(true);
 		
-		JLabel lblGiveUsA = new JLabel("Give us a sec g");
-		lblGiveUsA.setBounds(12, 2, 132, 15);
+		JLabel lblGiveUsA = new JLabel("Give us a few seconds");
+		lblGiveUsA.setBounds(12, 12, 250, 15);
 		contentPane.add(lblGiveUsA);
 		
 	}

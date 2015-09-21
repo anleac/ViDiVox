@@ -17,7 +17,6 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.awt.event.ActionEvent;
@@ -52,9 +51,11 @@ public class MainFrame extends JFrame {
 													// being 'pushed' to the
 													// right
 
-	private boolean videoPlaying = false; // this is to toggle the pause/play
-											// button and keep track of state
-	private boolean isMuted = false; // for the audio controller
+	//For toggling pause/play button
+	private boolean videoPlaying = false; 
+	
+	//For the audio controller
+	private boolean isMuted = false;
 	private boolean reverse = false;
 
 	/**
@@ -70,11 +71,8 @@ public class MainFrame extends JFrame {
 					mFrame = new MainFrame();
 					mFrame.setLocationRelativeTo(null); // centre screen
 					mFrame.setVisible(true);
-					mFrame.setMinimumSize(new Dimension(mFrame.getWidth(), mFrame.getHeight())); // set
-																									// min
-																									// dimension
-																									// to
-																									// current
+					//Set min dimension to current
+					mFrame.setMinimumSize(new Dimension(mFrame.getWidth(), mFrame.getHeight()));
 					IOHandler.CheckPaths();
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -99,11 +97,8 @@ public class MainFrame extends JFrame {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		JPopupMenu.setDefaultLightWeightPopupEnabled(false);
 		JMenuBar menuBar = new JMenuBar();
-		menuBar.setMinimumSize(new Dimension(getWidth(), menuBar.getHeight())); // set
-																				// min
-																				// dimension
-																				// to
-																				// current
+		//Set min dimension to current
+		menuBar.setMinimumSize(new Dimension(getWidth(), menuBar.getHeight())); 
 		setJMenuBar(menuBar);
 
 		final JLabel currentTime = new JLabel("00:00"), lengthTime = new JLabel("00:00");
@@ -159,12 +154,10 @@ public class MainFrame extends JFrame {
 					theVideo.prepareMedia(mediaPath);
 					videoLoaded = true;
 					
-					//TODO we should have some buttons disabled until now to save null handling
-					
 					if (!videoPlaying)
 						btnPlay.doClick();
-					mntmSaveCurrentVideo.setEnabled(true); // can now save with
-															// a video loaded
+					//Can now click save button as video is loaded
+					mntmSaveCurrentVideo.setEnabled(true); 
 				}
 			}
 		});
@@ -260,9 +253,8 @@ public class MainFrame extends JFrame {
 		});
 		bottomRowButtonsPanel.add(slider);
 
-		addComponentListener(new ComponentAdapter() { // to keep the slider at
-														// full width when the
-														// window resizes
+		//To keep the slider at full width when the window resizes
+		addComponentListener(new ComponentAdapter() { 
 			public void componentResized(ComponentEvent e) {
 				volalignment.setPreferredSize(new Dimension(getWidth() - 580, 1));
 				timealignment.setPreferredSize(new Dimension(getWidth() - 295, 1));
