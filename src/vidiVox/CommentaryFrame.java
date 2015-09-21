@@ -42,7 +42,7 @@ public class CommentaryFrame extends JFrame {
 	public CommentaryFrame() {
 		setTitle("Add Commentary");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 459, 246);
+		setBounds(100, 100, 460, 268);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -118,7 +118,7 @@ public class CommentaryFrame extends JFrame {
 		lblWriteTextBelow.setBounds(12, 0, 378, 15);
 		contentPane.add(lblWriteTextBelow);
 
-		JButton btnStop = new JButton("Stop");
+		JButton btnStop = new JButton("Stop Preview");
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// Stop button clicked
@@ -126,7 +126,7 @@ public class CommentaryFrame extends JFrame {
 			}
 		});
 		btnStop.setBackground(Color.WHITE);
-		btnStop.setBounds(25, 205, 117, 25);
+		btnStop.setBounds(15, 195, 133, 25);
 		contentPane.add(btnStop);
 	}
 }
