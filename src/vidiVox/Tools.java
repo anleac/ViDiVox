@@ -1,14 +1,11 @@
 package vidiVox;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintWriter;
-
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 
 /*
@@ -16,115 +13,148 @@ import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
  * Keeping button logic clean and simple
  */
 public class Tools {
+
 	static EmbeddedMediaPlayerComponent mediaPlayerComponent = null;
 	static File lastDir = null;
+
 	public static File openFile() {
-		
+
 		JFileChooser jfc = new JFileChooser();
-		if(lastDir != null){
-		jfc.setCurrentDirectory(lastDir);
+		if (lastDir != null) {
+			jfc.setCurrentDirectory(lastDir);
 		}
 		jfc.showOpenDialog(null);
 		File f = jfc.getSelectedFile();
-		if (f != null){
-		lastDir = f.getParentFile();
+		if (f != null) {
+			lastDir = f.getParentFile();
 		}
 		return f;
-		
+
 	}
-	
-	
-	//displays the time in a nice format, no in milliseconds
-	public static String LongToTime(long length){
-		length = length / 1000; //as was in ms, get it down to seconds
+
+	// displays the time in a nice format, no in milliseconds
+	public static String LongToTime(long length) {
+		length = length / 1000; // as was in ms, get it down to seconds
 		String toReturn = "";
 		int minutes = (int) (length / 60);
 		int seconds = (int) (length % 60);
-		if (minutes - 10 < 0) toReturn += "0";
+		if (minutes - 10 < 0)
+			toReturn += "0";
 		toReturn += minutes + ":";
-		if (seconds - 10 < 0) toReturn += "0";
+		if (seconds - 10 < 0)
+			toReturn += "0";
 		toReturn += seconds;
 		return toReturn;
 	}
-	
-	public static EmbeddedMediaPlayerComponent getMediaPlayerComponent(){
-		if (mediaPlayerComponent == null){
-		mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
+
+	public static EmbeddedMediaPlayerComponent getMediaPlayerComponent() {
+		if (mediaPlayerComponent == null) {
+			mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
 		}
 		return mediaPlayerComponent;
-		
+
 	}
-	
-	public static void displayInfo(String msg){
+
+	public static void displayInfo(String msg) {
 		JOptionPane.showMessageDialog(null, msg, "FYI", JOptionPane.INFORMATION_MESSAGE);
 	}
-	
-	public static void displayError(String msg){
+
+	public static void displayError(String msg) {
 		JOptionPane.showMessageDialog(null, msg, "Error", JOptionPane.ERROR_MESSAGE);
 	}
-	
-	public static void addCustomAudio(File audioFile){
-		//Is forced to be mp3 from file chooser
-		//Brief says audio is to be automatically added to beginning of video
-		
-		
-		
-	}
-	
-	public static File openMP3File(){
+
+	public static void addCustomAudio(File audioFile, File videoFile) {
+		// Is forced to be mp3 from file chooser
+		// Brief says audio is to be automatically added to beginning of video
+
+		String mp3Path = audioFile.getAbsolutePath();
+		String videoPath = videoFile.getAbsolutePath();
+
 		JFileChooser jfc = new JFileChooser();
-		if(lastDir != null){
-		jfc.setCurrentDirectory(lastDir);
-		}
-		//Same as other file chooser, but only allows mp3 files
-		FileFilter ff = new FileNameExtensionFilter("MP3 File", "mp3");
-		jfc.setFileFilter(ff);
-		jfc.showOpenDialog(null);
+		jfc.showSaveDialog(null);
+
 		File f = jfc.getSelectedFile();
-		if (f != null){
-		lastDir = f.getParentFile();
-		}
-		return f;
-		
-	}
-	
-	public static void speakFestival(String textToSay){
-		
-		String cmd = "echo "+"\""+textToSay+"\" | festival --tts";
-		System.out.println(cmd);
-		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", cmd);
-		try {
-			Process process = pb.start();
-		} catch (IOException e) {
-			displayError("Error using festival speech");
+
+		if (f != null) {
+			String outVidPath = f.getAbsolutePath();
+			String cmd = "ffmpeg -i " + videoPath + " -i " + mp3Path + " -map 0:v -map 1:a " + outVidPath;
+			System.out.println(cmd);
+			ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", cmd);
+
+			try {
+				ProgressBarFrame.pbFrame.setVisible(true);
+				Process process = pb.start();
+				process.waitFor();
+				ProgressBarFrame.pbFrame.setVisible(false);
+				displayInfo("Done!");
+			} catch (Exception e) {
+				displayError("Error adding audio to video");
+			}
 		}
 
 	}
-	
-	public static void writeTextToFile(String text, String fileName){
+
+	public static File openMP3File() {
+		JFileChooser jfc = new JFileChooser();
+		if (lastDir != null) {
+			jfc.setCurrentDirectory(lastDir);
+		}
+		// Same as other file chooser, but only allows mp3 files
+		FileFilter ff = new FileNameExtensionFilter("MP3 File", "mp3");
+
+		jfc.setFileFilter(ff);
+		jfc.showOpenDialog(null);
+
+		File f = jfc.getSelectedFile();
+		if (f != null) {
+			lastDir = f.getParentFile();
+		}
+		return f;
+
+	}
+
+	public static void speakFestival(String textToSay) {
+
+		String cmd = "echo " + "\"" + textToSay + "\" | festival --tts";
+
+		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", cmd);
+
+		try {
+			Process process = pb.start();
+			CommentaryFrame.btnPreview.setText("Preview");
+			CommentaryFrame.btnIsPreview = true;
+		} catch (Exception e) {
+			displayError("Error using festival speech");
+		}
+	}
+
+	public static void writeTextToFile(String text, String fileName) {
 		PrintWriter pw = null;
-		try{
-		pw = new PrintWriter(IOHandler.Mp3Directory+fileName);
-		} catch (Exception e){
+		try {
+			pw = new PrintWriter(IOHandler.Mp3Directory + fileName);
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		pw.write(text);
 		pw.close();
-		
+
 	}
-	
-	public static void saveFestToMP3(String textToSave){
+
+	public static void saveFestToMP3(String textToSave) {
 		IOHandler.CheckPaths();
-		String wavFullPath = IOHandler.Mp3Directory+"output.wav";
-		String tmpTxtFullPath = IOHandler.Mp3Directory+"txtTmp.txt";
-		String mp3FullPath = IOHandler.Mp3Directory+"output2.mp3";
+
+		String wavFullPath = IOHandler.Mp3Directory + "output.wav";
+		String tmpTxtFullPath = IOHandler.Mp3Directory + "txtTmp.txt";
+		String mp3FullPath = IOHandler.Mp3Directory + "output2.mp3";
+
 		writeTextToFile(textToSave, "txtTmp.txt");
-		String cmd1 = "text2wave -o "+wavFullPath+" "+tmpTxtFullPath;
-		String cmd2 = "ffmpeg -i "+wavFullPath+" "+mp3FullPath;
-		System.out.println(cmd1);
-		System.out.println(cmd2);
+
+		String cmd1 = "text2wave -o " + wavFullPath + " " + tmpTxtFullPath;
+		String cmd2 = "ffmpeg -i " + wavFullPath + " " + mp3FullPath;
+
 		ProcessBuilder pb1 = new ProcessBuilder("/bin/bash", "-c", cmd1);
 		ProcessBuilder pb2 = new ProcessBuilder("/bin/bash", "-c", cmd2);
+
 		try {
 			Process process1 = pb1.start();
 			process1.waitFor();
@@ -132,18 +162,29 @@ public class Tools {
 		} catch (Exception e) {
 			displayError("Error saving speech to MP3");
 		}
-		//deleting intermediate files (output.wav and txtTmp)
+
+		// deleting intermediate files (output.wav and txtTmp)
 		File f1 = new File(tmpTxtFullPath);
 		File f2 = new File(wavFullPath);
 		f1.delete();
 		f2.delete();
 		File outputMP3 = new File(mp3FullPath);
-		displayInfo("MP3 file saved to \n"+outputMP3.getAbsolutePath());
-		
-		
-		
-		
+		displayInfo("MP3 file saved to \n" + outputMP3.getAbsolutePath());
+
 	}
-	
+
+	public static void killAllFestProc() {
+
+		String cmd = "killall festival";
+
+		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", cmd);
+		try {
+			Process process = pb.start();
+			process.waitFor();
+		} catch (Exception e) {
+			displayError("Error killing festival process");
+		}
+
+	}
 
 }
