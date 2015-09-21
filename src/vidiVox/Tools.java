@@ -142,7 +142,7 @@ public class Tools {
 
 	public static void saveFestToMP3(String textToSave) {
 		IOHandler.CheckPaths();
-
+		
 		String wavFullPath = IOHandler.Mp3Directory + "output.wav";
 		String tmpTxtFullPath = IOHandler.Mp3Directory + "txtTmp.txt";
 		String mp3FullPath = IOHandler.Mp3Directory + "output2.mp3";
@@ -169,7 +169,12 @@ public class Tools {
 		f1.delete();
 		f2.delete();
 		File outputMP3 = new File(mp3FullPath);
+		File currentVideo = new File(MainFrame.mFrame.chosenVideoPath);
 		displayInfo("MP3 file saved to \n" + outputMP3.getAbsolutePath());
+		if(CommentaryFrame.chckbxApplyThisSpeech.isSelected()){
+			//Checkbox is selected upon save button click
+			addCustomAudio(outputMP3, currentVideo);
+		}
 
 	}
 

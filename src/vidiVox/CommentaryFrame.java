@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import javax.swing.JLabel;
+import javax.swing.JCheckBox;
 
 @SuppressWarnings("serial")
 public class CommentaryFrame extends JFrame {
@@ -19,6 +20,7 @@ public class CommentaryFrame extends JFrame {
 	private JTextArea textField;
 	public static JButton btnPreview;
 	public static boolean btnIsPreview = true;
+	public static JCheckBox chckbxApplyThisSpeech;
 
 	/**
 	 * Launch the application.
@@ -128,5 +130,9 @@ public class CommentaryFrame extends JFrame {
 		btnStop.setBackground(Color.WHITE);
 		btnStop.setBounds(15, 195, 133, 25);
 		contentPane.add(btnStop);
+		
+		chckbxApplyThisSpeech = new JCheckBox("Apply this speech to video upon Save");
+		chckbxApplyThisSpeech.setBounds(160, 196, 290, 23);
+		contentPane.add(chckbxApplyThisSpeech);
 	}
 }
