@@ -44,7 +44,7 @@ public class MainFrame extends JFrame {
 	private final EmbeddedMediaPlayer theVideo = Tools.getMediaPlayerComponent().getMediaPlayer();
 	private boolean videoLoaded = false;
 	private float videoPlayRate = 1.0f;
-	private String chosenVideoPath = null;
+	public String chosenVideoPath = null;
 
 	private Component volalignment, timealignment; // this is a 'hack' for
 													// flayouts, which will
