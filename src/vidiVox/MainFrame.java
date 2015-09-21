@@ -18,6 +18,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.io.File;
+import java.text.DecimalFormat;
 import java.awt.event.ActionEvent;
 
 import javax.swing.Box;
@@ -41,6 +42,7 @@ public class MainFrame extends JFrame {
 	public static MainFrame mFrame;
 	private final EmbeddedMediaPlayer theVideo = Tools.getMediaPlayerComponent().getMediaPlayer();
 	private boolean videoLoaded = false;
+	private float videoPlayRate = 1.0f;
 
 	private Component volalignment, timealignment; // this is a 'hack' for
 													// flayouts, which will
@@ -51,6 +53,7 @@ public class MainFrame extends JFrame {
 	private boolean videoPlaying = false; // this is to toggle the pause/play
 											// button and keep track of state
 	private boolean isMuted = false; // for the audio controller
+	private boolean reverse = false;
 
 	/**
 	 * Launch the application.
@@ -101,7 +104,9 @@ public class MainFrame extends JFrame {
 		setJMenuBar(menuBar);
 
 		final JLabel currentTime = new JLabel("00:00"), lengthTime = new JLabel("00:00");
-
+		final JLabel lblPlayspeedx = new JLabel("Playspeed: 1.00x");
+		
+		
 		JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
 
@@ -135,6 +140,8 @@ public class MainFrame extends JFrame {
 					videoPlaying = false; // paused;
 					btnPlay.setIcon(new ImageIcon(MainFrame.class.getResource("/vidiVox/play.jpg")));
 				}
+				reverse = false;
+				videoPlayRate = 1;
 			}
 		});
 
@@ -214,7 +221,9 @@ public class MainFrame extends JFrame {
 			public void stateChanged(ChangeEvent evt) {
 				JSlider slider = (JSlider) evt.getSource();
 				int value = slider.getValue();
-				//theVideo.setPosition((float)value);
+				if (slider.getValueIsAdjusting()){
+					theVideo.setTime(value * 1000);	
+				}
 			}
 		});
 		bottomRowButtonsPanel.add(slider);
@@ -224,15 +233,18 @@ public class MainFrame extends JFrame {
 														// window resizes
 			public void componentResized(ComponentEvent e) {
 				volalignment.setPreferredSize(new Dimension(getWidth() - 580, 1));
-				timealignment.setPreferredSize(new Dimension(getWidth() - 115, 1));
+				timealignment.setPreferredSize(new Dimension(getWidth() - 295, 1));
 				slider.setPreferredSize(new Dimension(getWidth() - 20, 20));
 			}
 		});
 
 		bottomRowButtonsPanel.add(currentTime);
 
-		timealignment = Box.createHorizontalStrut(getWidth() - 115);
-
+		timealignment = Box.createHorizontalStrut(getWidth() - 295);
+		bottomRowButtonsPanel.add(Box.createHorizontalStrut(54));
+	
+		bottomRowButtonsPanel.add(lblPlayspeedx);
+		
 		bottomRowButtonsPanel.add(timealignment);
 		bottomRowButtonsPanel.add(lengthTime);
 
@@ -246,9 +258,8 @@ public class MainFrame extends JFrame {
 		btnStop.setBackground(Color.WHITE);
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// Stop button clicked
-
-				theVideo.stop();
+				theVideo.setTime(0);
+				btnPlay.doClick();
 			}
 		});
 
@@ -257,8 +268,14 @@ public class MainFrame extends JFrame {
 		btnReverse.setBackground(Color.WHITE);
 		btnReverse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// Reverse button clicked
-
+				if (videoPlaying){
+					btnPlay.doClick();
+				}
+				if (!reverse){
+					videoPlayRate = 1f;
+				}
+				videoPlayRate += 1f;
+				reverse = true;
 			}
 		});
 
@@ -274,7 +291,14 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// Fast forward button clicked
 				// Continuously fast forward until play button clicked
-				theVideo.setRate(3.0f);
+				if (videoPlaying){
+					btnPlay.doClick();
+				}
+				if (reverse){
+					reverse = false;
+					videoPlayRate = 1f;
+				}
+				videoPlayRate += 1f;
 			}
 		}); //
 		bottomRowButtonsPanel.add(btnFastforward);
@@ -288,6 +312,7 @@ public class MainFrame extends JFrame {
 
 		final JSlider volSlider = new JSlider();
 		volSlider.setValue(100);
+		theVideo.setVolume(100);
 		volSlider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent evt) {
 				JSlider slider = (JSlider) evt.getSource();
@@ -342,16 +367,39 @@ public class MainFrame extends JFrame {
 
 		bottomRowButtonsPanel.add(volSlider);
 
-		Timer t = new Timer(200, new ActionListener() {
+		Timer t = new Timer(250, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				if (videoLoaded) {
+					DecimalFormat d = new DecimalFormat();
+					d.setMinimumFractionDigits(2);
+					String t = "Playspeed: ";
+					if (reverse) t += '-';
+					t += d.format(videoPlayRate) + "x";
+					lblPlayspeedx.setText(t);
+					theVideo.setRate(videoPlayRate);
 					currentTime.setText(Tools.LongToTime(theVideo.getTime()));
 					lengthTime.setText(Tools.LongToTime(theVideo.getMediaMeta().getLength()));
+					int iPos = (int)(theVideo.getTime() / 1000);
+					if (iPos + 1 == slider.getMaximum()){
+						theVideo.setTime(0);
+						btnPlay.doClick();
+					}
 					if (theVideo.getMediaMeta().getLength() > 0) {
-						int iPos = (int)Math.floor((((float)((float)theVideo.getTime() / (float)theVideo.getMediaMeta().getLength())) * 100.0));
 						slider.setValue(iPos);
+						slider.setMinimum(0);
 						slider.setMaximum((int)(theVideo.getMediaMeta().getLength() / 1000));
+					}
+					if (videoPlayRate > 1f){
+						if (reverse){
+							theVideo.setTime(theVideo.getTime() - (int)((videoPlayRate / (float)4f) * 1000));
+							if (theVideo.getTime() <= 0){
+								videoPlayRate = 1f;
+								reverse = false;
+							}
+						}else{
+							theVideo.setTime(theVideo.getTime() + (int)((videoPlayRate / (float)4f) * 1000));
+						}
 					}
 				}
 			}
