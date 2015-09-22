@@ -22,6 +22,7 @@ public class ProgressBarFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					pbFrame.setLocationRelativeTo(null);
 					pbFrame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -37,21 +38,22 @@ public class ProgressBarFrame extends JFrame {
 		setTitle("Working...");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 239, 73);
+		setBounds(100, 100, 211, 129);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		
 		progressBar = new JProgressBar();
-		progressBar.setBounds(22, 41, 180, 20);
+		progressBar.setBounds(22, 41, 163, 20);
 		
 		contentPane.add(progressBar);
 		progressBar.setIndeterminate(true);
 		
 		JLabel lblGiveUsA = new JLabel("Give us a few seconds");
-		lblGiveUsA.setBounds(12, 12, 250, 15);
+		lblGiveUsA.setBounds(24, 14, 250, 15);
 		contentPane.add(lblGiveUsA);
 		
 	}
 }
+
