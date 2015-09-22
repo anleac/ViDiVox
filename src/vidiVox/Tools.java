@@ -1,6 +1,8 @@
 package vidiVox;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
@@ -16,6 +18,7 @@ public class Tools {
 
 	static EmbeddedMediaPlayerComponent mediaPlayerComponent = null;
 	static File lastDir = null;
+	static String festID = null;
 
 	public static File openFile() {
 
@@ -71,6 +74,7 @@ public class Tools {
 		String videoPath = videoFile.getAbsolutePath();
 
 		JFileChooser jfc = new JFileChooser();
+		displayInfo("Choose somewhere to save your new video");
 		jfc.showSaveDialog(null);
 
 		File f = jfc.getSelectedFile();
@@ -115,14 +119,17 @@ public class Tools {
 
 	public static void speakFestival(String textToSay) {
 
-		String cmd = "echo " + "\"" + textToSay + "\" | festival --tts";
-
+		String cmd = "echo " + "\"" + textToSay + "\" | festival --tts &";
+		System.out.println(cmd);
+		
 		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", cmd);
 
 		try {
-			pb.start();
-			CommentaryFrame.btnPreview.setText("Preview");
-			CommentaryFrame.btnIsPreview = true;
+			Process process = pb.start();
+			BufferedReader stdin = new BufferedReader(new InputStreamReader(process.getInputStream()));
+			System.out.println(stdin.readLine());
+			//festID = stdin.readLine().split(" ")[1];
+			//System.out.println(festID);
 		} catch (Exception e) {
 			displayError("Error using festival speech");
 		}

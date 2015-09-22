@@ -18,8 +18,6 @@ public class CommentaryFrame extends JFrame {
 	private JPanel contentPane;
 	public static CommentaryFrame cmFrame = new CommentaryFrame();
 	private JTextArea textField;
-	public static JButton btnPreview;
-	public static boolean btnIsPreview = true;
 	public static JCheckBox chckbxApplyThisSpeech;
 
 	/**
@@ -56,7 +54,7 @@ public class CommentaryFrame extends JFrame {
 		contentPane.add(textField);
 
 		// Preview button plays text through festival
-		btnPreview = new JButton("Preview");
+		JButton btnPreview = new JButton("Preview");
 		btnPreview.setBounds(15, 168, 133, 25);
 		btnPreview.setBackground(Color.WHITE);
 		btnPreview.addActionListener(new ActionListener() {
@@ -69,18 +67,7 @@ public class CommentaryFrame extends JFrame {
 					// Too many words
 					Tools.displayError("Number of words should be less than 30");
 				} else {
-					if (btnIsPreview) {
-						// Good amount of words
-						// They want to preview the synth
-						btnPreview.setText("Cancel");
-						btnIsPreview = false;
-						Tools.speakFestival(textToPreview);
-					} else {
-						// They want to cancel the synth
-						Tools.killAllFestProc();
-						btnIsPreview = true;
-						btnPreview.setText("Preview");
-					}
+					Tools.speakFestival(textToPreview);
 				}
 
 			}
