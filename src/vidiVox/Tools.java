@@ -10,6 +10,7 @@ import java.lang.reflect.Field;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
@@ -74,6 +75,7 @@ public class Tools {
 		// Is forced to be mp3 from file chooser
 		// Brief says audio is to be automatically added to beginning of video
 
+		
 		String mp3Path = audioFile.getAbsolutePath();
 		String videoPath = videoFile.getAbsolutePath();
 
@@ -84,25 +86,16 @@ public class Tools {
 		File f = jfc.getSelectedFile();
 
 		if (f != null) {
+			ProgressBarFrame.pbFrame.setLocationRelativeTo(null);
+			ProgressBarFrame.pbFrame.setVisible(true);
+			
+			addAudio aa = new addAudio(mp3Path, videoPath, f);
+			aa.execute();
 			String outVidPath = f.getAbsolutePath();
-			if (!hasExtension(outVidPath)){
+			if (!Tools.hasExtension(outVidPath)){
 				outVidPath += ".avi";
 			}
-			String cmd = "ffmpeg -i " + videoPath + " -i " + mp3Path + " -map 0:v -map 1:a " + outVidPath;
-			ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", cmd);
-
-			try {
-				ProgressBarFrame.pbFrame.setLocationRelativeTo(null);
-				ProgressBarFrame.pbFrame.setVisible(true);
-				Process process = pb.start();
-				process.waitFor();
-				ProgressBarFrame.pbFrame.setVisible(false);
-				displayInfo("Video succesfully saved to\n" + outVidPath);
-				return outVidPath;
-			} catch (Exception e) {
-				displayError("Error adding audio to video");
-			}
-
+			return outVidPath;
 		}
 		return null;
 	}
@@ -163,7 +156,6 @@ public class Tools {
 
 		String wavFullPath = IOHandler.TmpDirectory + "output.wav";
 		String tmpTxtFullPath = IOHandler.TmpDirectory + "txtTmp.txt";
-		int numFiles = new File(IOHandler.Mp3Directory).listFiles().length;
 		JFileChooser jfc = new JFileChooser();
 		displayInfo("Choose where to save the mp3 file");
 		jfc.showSaveDialog(null);

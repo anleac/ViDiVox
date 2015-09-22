@@ -12,8 +12,8 @@ import javax.swing.JLabel;
 public class ProgressBarFrame extends JFrame {
 
 	private JPanel contentPane;
+
 	public static ProgressBarFrame pbFrame = new ProgressBarFrame();
-	public static JProgressBar progressBar = null;
 
 	/**
 	 * Launch the application.
@@ -35,25 +35,28 @@ public class ProgressBarFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public ProgressBarFrame() {
+		contentPane = new JPanel();
+contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		
+		contentPane.setLayout(null);
+		JProgressBar progressBar = new JProgressBar();
+		progressBar.setBounds(38, 61, 163, 20);
+		progressBar.setIndeterminate(true);
+		progressBar.setValue(1);
+		progressBar.setVisible(true);
+		contentPane.add(progressBar);
 		setTitle("Working...");
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 263, 176);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		setContentPane(contentPane);
-		contentPane.setLayout(null);
 		
-		progressBar = new JProgressBar();
-		progressBar.setBounds(38, 61, 163, 20);
 		
-		contentPane.add(progressBar);
-		progressBar.setIndeterminate(true);
+		
 		
 		JLabel lblGiveUsA = new JLabel("Give us a few seconds");
 		lblGiveUsA.setBounds(38, 22, 250, 15);
 		contentPane.add(lblGiveUsA);
-		
+		setContentPane(contentPane);
 	}
 }
 
