@@ -173,35 +173,6 @@ public class MainFrame extends JFrame {
 		});
 		mnFile.add(mntmCloseProgram);
 
-		JMenu mnAddAudioOverlay = new JMenu("Audio Overlay");
-		menuBar.add(mnAddAudioOverlay);
-
-		JMenuItem mntmAudio = new JMenuItem("Add Audio");
-		mntmAudio.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				// Audio button clicked
-				File audioFile = Tools.openMP3File();
-				File videoFile = new File(chosenVideoPath);
-				if (audioFile != null) {
-					Tools.addCustomAudio(audioFile, videoFile);
-				}
-			}
-		});
-		mnAddAudioOverlay.add(mntmAudio);
-
-		JMenuItem mntmCommentary = new JMenuItem("Add Commentary");
-		mntmCommentary.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// Commentary button clicked
-				CommentaryFrame.cmFrame.setLocationRelativeTo(null);
-				CommentaryFrame.cmFrame.setVisible(true);
-			}
-		});
-		mnAddAudioOverlay.add(mntmCommentary);
-
-		JMenuItem mntmClearAll = new JMenuItem("Clear All");
-		mnAddAudioOverlay.add(mntmClearAll);
-
 		JPanel videoPanel = new JPanel();
 		videoPanel.add(Tools.getMediaPlayerComponent());
 
@@ -222,14 +193,53 @@ public class MainFrame extends JFrame {
 		JButton btnAddAudio = new JButton("Add audio");
 		btnAddAudio.setHorizontalAlignment(SwingConstants.LEFT);
 		btnAddAudio.setBackground(Color.WHITE);
+		btnAddAudio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				// Audio button clicked
+				File audioFile = Tools.openMP3File();
+				File videoFile = new File(chosenVideoPath);
+				if (videoPlaying){
+					btnPlay.doClick();
+				}
+				if (audioFile != null) {
+					Tools.addCustomAudio(audioFile, videoFile);
+				}
+			}
+		});
 		northPanel.add(btnAddAudio);
 		
 		JButton btnAddCommentary = new JButton("Add commentary");
 		btnAddCommentary.setHorizontalAlignment(SwingConstants.LEFT);
 		btnAddCommentary.setBackground(Color.WHITE);
+		btnAddCommentary.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// Commentary button clicked
+				if (videoPlaying){
+					btnPlay.doClick();
+				}
+				CommentaryFrame.cmFrame.setLocationRelativeTo(null);
+				CommentaryFrame.cmFrame.setVisible(true);
+			}
+		});
 		northPanel.add(btnAddCommentary);
 		
-		JButton btnRemoveAllOverlay = new JButton("Remove all overlay");
+		JButton btnRemoveAllOverlay = new JButton("Revert to original");
+		btnRemoveAllOverlay.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				File chosenFile = Tools.openFile();
+				if (chosenFile != null) {
+					String mediaPath = chosenFile.getAbsolutePath();
+					chosenVideoPath = mediaPath;
+					theVideo.prepareMedia(mediaPath);
+					videoLoaded = true;
+					
+					if (!videoPlaying)
+						btnPlay.doClick();
+					//Can now click save button as video is loaded
+					mntmSaveCurrentVideo.setEnabled(true); 
+				}
+			}
+		});
 		btnRemoveAllOverlay.setHorizontalAlignment(SwingConstants.LEFT);
 		btnRemoveAllOverlay.setBackground(Color.WHITE);
 		northPanel.add(btnRemoveAllOverlay);
