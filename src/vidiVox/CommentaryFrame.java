@@ -7,6 +7,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JTextArea;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.ActionEvent;
 import java.awt.Color;
 import javax.swing.JLabel;
@@ -42,7 +44,7 @@ public class CommentaryFrame extends JFrame {
 	public CommentaryFrame() {
 		setTitle("Add Commentary");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 460, 288);
+		setBounds(100, 100, 458, 269);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -117,12 +119,19 @@ public class CommentaryFrame extends JFrame {
 		btnStop.setBackground(Color.WHITE);
 		btnStop.setBounds(15, 205, 133, 25);
 		contentPane.add(btnStop);
-		
+		final JCheckBox chckbxLoadNewVideo = new JCheckBox("Load new video after completion");
 		chckbxApplyThisSpeech = new JCheckBox("Apply audio to a new video");
 		chckbxApplyThisSpeech.setBounds(160, 196, 290, 23);
+		chckbxApplyThisSpeech.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+            	chckbxLoadNewVideo.setEnabled((e.getStateChange() == ItemEvent.SELECTED));
+            }
+
+        });
 		contentPane.add(chckbxApplyThisSpeech);
-		
-		JCheckBox chckbxLoadNewVideo = new JCheckBox("Load new video after completion");
+	
+		chckbxLoadNewVideo.setEnabled(false);
 		chckbxLoadNewVideo.setBounds(160, 216, 290, 23);
 		contentPane.add(chckbxLoadNewVideo);
 	}
