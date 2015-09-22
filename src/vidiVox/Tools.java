@@ -85,6 +85,9 @@ public class Tools {
 
 		if (f != null) {
 			String outVidPath = f.getAbsolutePath();
+			if (!hasExtension(outVidPath)){
+				outVidPath += ".avi";
+			}
 			String cmd = "ffmpeg -i " + videoPath + " -i " + mp3Path + " -map 0:v -map 1:a " + outVidPath;
 			ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", cmd);
 
@@ -94,12 +97,12 @@ public class Tools {
 				Process process = pb.start();
 				process.waitFor();
 				ProgressBarFrame.pbFrame.setVisible(false);
-				displayInfo("Done!");
+				displayInfo("Video succesfully saved to\n" + outVidPath);
 				return outVidPath;
 			} catch (Exception e) {
 				displayError("Error adding audio to video");
 			}
-			
+
 		}
 		return null;
 	}
@@ -135,7 +138,6 @@ public class Tools {
 			Field f = p1.getClass().getDeclaredField("pid");
 			f.setAccessible(true);
 			pid = f.getInt(p1);
-			
 
 		} catch (Exception e) {
 			displayError("Error using festival speech");
@@ -166,10 +168,14 @@ public class Tools {
 		displayInfo("Choose where to save the mp3 file");
 		jfc.showSaveDialog(null);
 		File mp3 = jfc.getSelectedFile();
-		if (mp3 == null){
+		if (mp3 == null) {
 			return;
 		}
 		String mp3FullPath = mp3.getAbsolutePath();
+		
+		if (!hasExtension(mp3FullPath)){
+			mp3FullPath += ".mp3";
+		}
 
 		writeTextToFile(textToSave, "txtTmp.txt");
 
@@ -200,27 +206,31 @@ public class Tools {
 				displayError("You need a video opened first to add speech to it");
 			}
 		}
-		
-		if (CommentaryFrame.cmFrame.loadNewVideoIsChecked){
-			//Checkbox for auto load new video is checked
-			if (newVidPath != null){
-			MainFrame.mFrame.theVideo.stop();
-			MainFrame.mFrame.chosenVideoPath = newVidPath;
-			MainFrame.mFrame.theVideo.prepareMedia(newVidPath);
+
+		if (CommentaryFrame.cmFrame.loadNewVideoIsChecked) {
+			// Checkbox for auto load new video is checked
+			if (newVidPath != null) {
+				MainFrame.mFrame.theVideo.stop();
+				MainFrame.mFrame.chosenVideoPath = newVidPath;
+				
+				MainFrame.mFrame.theVideo.prepareMedia(newVidPath);
 			}
-			
-			
 		}
+	}
+	
+	public static boolean hasExtension(String s){
+		return (s.split(File.separator)[s.split(File.separator).length - 1].contains("."));
 	}
 
 	public static void killAllFestProc(int pid) {
 
-		if (pid != 0){
+		if (pid != 0) {
 			String cmd = "pstree -p " + pid;
-	/*
-	 * Using the pstree bash command, we find the process named "aplay" associated with festival 
-	 * which is what makes the sound. The pid of this process is found and killed using the "kill -9" command
-	 */
+			/*
+			 * Using the pstree bash command, we find the process named "aplay"
+			 * associated with festival which is what makes the sound. The pid
+			 * of this process is found and killed using the "kill -9" command
+			 */
 			ProcessBuilder pb2 = new ProcessBuilder("/bin/bash", "-c", cmd);
 			String line = null;
 			String s = "";
@@ -253,7 +263,7 @@ public class Tools {
 			} catch (IOException e) {
 				System.out.println("Error killing process: " + pid);
 			}
-			}
+		}
 
 	}
 }
