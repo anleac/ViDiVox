@@ -86,6 +86,7 @@ public class Tools {
 			ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", cmd);
 
 			try {
+				ProgressBarFrame.pbFrame.setLocationRelativeTo(null);
 				ProgressBarFrame.pbFrame.setVisible(true);
 				Process process = pb.start();
 				process.waitFor();
@@ -121,15 +122,15 @@ public class Tools {
 
 		String cmd = "echo " + "\"" + textToSay + "\" | festival --tts &";
 		System.out.println(cmd);
-		
+
 		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", cmd);
 
 		try {
 			Process process = pb.start();
 			BufferedReader stdin = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			System.out.println(stdin.readLine());
-			//festID = stdin.readLine().split(" ")[1];
-			//System.out.println(festID);
+			// festID = stdin.readLine().split(" ")[1];
+			// System.out.println(festID);
 		} catch (Exception e) {
 			displayError("Error using festival speech");
 		}
@@ -138,7 +139,7 @@ public class Tools {
 	public static void writeTextToFile(String text, String fileName) {
 		PrintWriter pw = null;
 		try {
-			pw = new PrintWriter(IOHandler.Mp3Directory + fileName);
+			pw = new PrintWriter(IOHandler.TmpDirectory + fileName);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -149,10 +150,11 @@ public class Tools {
 
 	public static void saveFestToMP3(String textToSave) {
 		IOHandler.CheckPaths();
-		
-		String wavFullPath = IOHandler.Mp3Directory + "output.wav";
-		String tmpTxtFullPath = IOHandler.Mp3Directory + "txtTmp.txt";
-		String mp3FullPath = IOHandler.Mp3Directory + "output2.mp3";
+
+		String wavFullPath = IOHandler.TmpDirectory + "output.wav";
+		String tmpTxtFullPath = IOHandler.TmpDirectory + "txtTmp.txt";
+		int numFiles = new File(IOHandler.Mp3Directory).listFiles().length;
+		String mp3FullPath = IOHandler.Mp3Directory + "output" + numFiles + ".mp3";
 
 		writeTextToFile(textToSave, "txtTmp.txt");
 
@@ -169,25 +171,19 @@ public class Tools {
 		} catch (Exception e) {
 			displayError("Error saving speech to MP3");
 		}
-
 		// deleting intermediate files (output.wav and txtTmp)
-		File f1 = new File(tmpTxtFullPath);
-		File f2 = new File(wavFullPath);
-		f1.delete();
-		f2.delete();
 		File outputMP3 = new File(mp3FullPath);
 		String vidPath = MainFrame.mFrame.chosenVideoPath;
 		displayInfo("MP3 file saved to \n" + outputMP3.getAbsolutePath());
-		if(CommentaryFrame.chckbxApplyThisSpeech.isSelected()){
-			//Checkbox is selected upon save button click
-			if (vidPath != null){
+		if (CommentaryFrame.chckbxApplyThisSpeech.isSelected()) {
+			// Checkbox is selected upon save button click
+			if (vidPath != null) {
 				File videoFile = new File(vidPath);
-			addCustomAudio(outputMP3, videoFile);
-		} else {
-			displayError("You need a video opened first");
-		}
+				addCustomAudio(outputMP3, videoFile);
+			} else {
+				displayError("You need a video opened first");
 			}
-
+		}
 	}
 
 	public static void killAllFestProc() {
