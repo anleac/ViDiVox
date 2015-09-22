@@ -125,7 +125,6 @@ public class Tools {
 	public static int speakFestival(String textToSay) {
 
 		String cmd = "echo " + "\"" + textToSay + "\" | festival --tts";
-		System.out.println(cmd);
 
 		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", cmd);
 		int pid = 0;
@@ -136,11 +135,6 @@ public class Tools {
 			f.setAccessible(true);
 			pid = f.getInt(p1);
 			
-		Process process = pb.start();
-			BufferedReader stdin = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			System.out.println(stdin.readLine());
-			// festID = stdin.readLine().split(" ")[1];
-			// System.out.println(festID);
 
 		} catch (Exception e) {
 			displayError("Error using festival speech");
@@ -203,7 +197,6 @@ public class Tools {
 
 		if (pid != 0){
 			String cmd = "pstree -p " + pid;
-			System.out.println(cmd);
 	/*
 	 * Using the pstree bash command, we find the process named "aplay" associated with festival 
 	 * which is what makes the sound. The pid of this process is found and killed using the "kill -9" command
@@ -219,7 +212,6 @@ public class Tools {
 				while ((line = br.readLine()) != null) {
 					s += line;
 				}
-				System.out.println(s);
 				int x = s.indexOf("play");
 				String sub = s.substring(x);
 				int length = sub.length();

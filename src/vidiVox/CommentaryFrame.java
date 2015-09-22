@@ -111,7 +111,6 @@ public class CommentaryFrame extends JFrame {
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// Stop button clicked
-				System.out.println(currentFestID);
 				Tools.killAllFestProc(currentFestID);
 			}
 		});
