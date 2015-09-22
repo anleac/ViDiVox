@@ -70,7 +70,7 @@ public class Tools {
 		JOptionPane.showMessageDialog(null, msg, "Error", JOptionPane.ERROR_MESSAGE);
 	}
 
-	public static void addCustomAudio(File audioFile, File videoFile) {
+	public static String addCustomAudio(File audioFile, File videoFile) {
 		// Is forced to be mp3 from file chooser
 		// Brief says audio is to be automatically added to beginning of video
 
@@ -86,7 +86,6 @@ public class Tools {
 		if (f != null) {
 			String outVidPath = f.getAbsolutePath();
 			String cmd = "ffmpeg -i " + videoPath + " -i " + mp3Path + " -map 0:v -map 1:a " + outVidPath;
-			System.out.println(cmd);
 			ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", cmd);
 
 			try {
@@ -96,11 +95,13 @@ public class Tools {
 				process.waitFor();
 				ProgressBarFrame.pbFrame.setVisible(false);
 				displayInfo("Done!");
+				return outVidPath;
 			} catch (Exception e) {
 				displayError("Error adding audio to video");
 			}
+			
 		}
-
+		return null;
 	}
 
 	public static File openMP3File() {
@@ -161,7 +162,14 @@ public class Tools {
 		String wavFullPath = IOHandler.TmpDirectory + "output.wav";
 		String tmpTxtFullPath = IOHandler.TmpDirectory + "txtTmp.txt";
 		int numFiles = new File(IOHandler.Mp3Directory).listFiles().length;
-		String mp3FullPath = IOHandler.Mp3Directory + "output" + numFiles + ".mp3";
+		JFileChooser jfc = new JFileChooser();
+		displayInfo("Choose where to save the mp3 file");
+		jfc.showSaveDialog(null);
+		File mp3 = jfc.getSelectedFile();
+		if (mp3 == null){
+			return;
+		}
+		String mp3FullPath = mp3.getAbsolutePath();
 
 		writeTextToFile(textToSave, "txtTmp.txt");
 
@@ -180,16 +188,25 @@ public class Tools {
 		}
 		// deleting intermediate files (output.wav and txtTmp)
 		File outputMP3 = new File(mp3FullPath);
-		String vidPath = MainFrame.mFrame.chosenVideoPath;
+		String newVidPath = null;
 		displayInfo("MP3 file saved to \n" + outputMP3.getAbsolutePath());
 		if (CommentaryFrame.chckbxApplyThisSpeech.isSelected()) {
+			String vidPath = MainFrame.mFrame.chosenVideoPath;
 			// Checkbox is selected upon save button click
 			if (vidPath != null) {
 				File videoFile = new File(vidPath);
-				addCustomAudio(outputMP3, videoFile);
+				newVidPath = addCustomAudio(outputMP3, videoFile);
 			} else {
-				displayError("You need a video opened first");
+				displayError("You need a video opened first to add speech to it");
 			}
+		}
+		
+		if (CommentaryFrame.chckbxLoadNewVideo.isSelected()){
+			//Checkbox for auto load new video is checked
+			if (newVidPath != null){
+			MainFrame.mFrame.theVideo.prepareMedia(newVidPath);
+			}
+			
 		}
 	}
 

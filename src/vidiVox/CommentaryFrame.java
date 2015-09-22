@@ -19,6 +19,7 @@ public class CommentaryFrame extends JFrame {
 	public static CommentaryFrame cmFrame = new CommentaryFrame();
 	private JTextArea textField;
 	public static JCheckBox chckbxApplyThisSpeech;
+	public static JCheckBox chckbxLoadNewVideo;
 	public static int currentFestID = 0;
 	/**
 	 * Launch the application.
@@ -122,7 +123,7 @@ public class CommentaryFrame extends JFrame {
 		chckbxApplyThisSpeech.setBounds(160, 196, 290, 23);
 		contentPane.add(chckbxApplyThisSpeech);
 		
-		JCheckBox chckbxLoadNewVideo = new JCheckBox("Load new video after completion");
+		chckbxLoadNewVideo = new JCheckBox("Load new video after completion");
 		chckbxLoadNewVideo.setBounds(160, 216, 290, 23);
 		contentPane.add(chckbxLoadNewVideo);
 	}

@@ -40,7 +40,7 @@ public class MainFrame extends JFrame {
 
 	private JPanel contentPane;
 	public static MainFrame mFrame;
-	private final EmbeddedMediaPlayer theVideo = Tools.getMediaPlayerComponent().getMediaPlayer();
+	public final EmbeddedMediaPlayer theVideo = Tools.getMediaPlayerComponent().getMediaPlayer();
 	private boolean videoLoaded = false;
 	private float videoPlayRate = 1.0f;
 	public String chosenVideoPath = null;
