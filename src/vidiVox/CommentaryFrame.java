@@ -42,7 +42,7 @@ public class CommentaryFrame extends JFrame {
 	public CommentaryFrame() {
 		setTitle("Add Commentary");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 460, 268);
+		setBounds(100, 100, 460, 288);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -115,11 +115,15 @@ public class CommentaryFrame extends JFrame {
 			}
 		});
 		btnStop.setBackground(Color.WHITE);
-		btnStop.setBounds(15, 195, 133, 25);
+		btnStop.setBounds(15, 205, 133, 25);
 		contentPane.add(btnStop);
 		
-		chckbxApplyThisSpeech = new JCheckBox("Apply this speech to video upon Save");
+		chckbxApplyThisSpeech = new JCheckBox("Apply audio to a new video");
 		chckbxApplyThisSpeech.setBounds(160, 196, 290, 23);
 		contentPane.add(chckbxApplyThisSpeech);
+		
+		JCheckBox chckbxLoadNewVideo = new JCheckBox("Load new video after completion");
+		chckbxLoadNewVideo.setBounds(160, 216, 290, 23);
+		contentPane.add(chckbxLoadNewVideo);
 	}
 }
