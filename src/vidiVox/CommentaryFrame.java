@@ -127,6 +127,7 @@ public class CommentaryFrame extends JFrame {
             @Override
             public void itemStateChanged(ItemEvent e) {
             	chckbxLoadNewVideo.setEnabled((e.getStateChange() == ItemEvent.SELECTED));
+            	if (chckbxLoadNewVideo.isEnabled() == false) chckbxLoadNewVideo.setSelected(false);
             }
 
         });
