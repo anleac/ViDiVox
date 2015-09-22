@@ -201,11 +201,14 @@ public class Tools {
 			}
 		}
 		
-		if (CommentaryFrame.chckbxLoadNewVideo.isSelected()){
+		if (CommentaryFrame.cmFrame.loadNewVideoIsChecked){
 			//Checkbox for auto load new video is checked
 			if (newVidPath != null){
+			MainFrame.mFrame.theVideo.stop();
+			MainFrame.mFrame.chosenVideoPath = newVidPath;
 			MainFrame.mFrame.theVideo.prepareMedia(newVidPath);
 			}
+			
 			
 		}
 	}

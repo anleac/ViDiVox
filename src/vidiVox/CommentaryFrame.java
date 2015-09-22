@@ -21,7 +21,7 @@ public class CommentaryFrame extends JFrame {
 	public static CommentaryFrame cmFrame = new CommentaryFrame();
 	private JTextArea textField;
 	public static JCheckBox chckbxApplyThisSpeech;
-	public static JCheckBox chckbxLoadNewVideo;
+	public static boolean loadNewVideoIsChecked = false;
 	public static int currentFestID = 0;
 	/**
 	 * Launch the application.
@@ -127,13 +127,24 @@ public class CommentaryFrame extends JFrame {
             @Override
             public void itemStateChanged(ItemEvent e) {
             	chckbxLoadNewVideo.setEnabled((e.getStateChange() == ItemEvent.SELECTED));
-            	if (chckbxLoadNewVideo.isEnabled() == false) chckbxLoadNewVideo.setSelected(false);
+            	if (chckbxLoadNewVideo.isEnabled() == false){ 
+            		chckbxLoadNewVideo.setSelected(false);
+            		loadNewVideoIsChecked = false;
+            	}
+            	
             }
 
         });
 		contentPane.add(chckbxApplyThisSpeech);
 		chckbxLoadNewVideo.setEnabled(false);
 		chckbxLoadNewVideo.setBounds(160, 216, 290, 23);
+		chckbxLoadNewVideo.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+            	loadNewVideoIsChecked = ((e.getStateChange() == ItemEvent.SELECTED));     	
+            }
+
+        });
 		contentPane.add(chckbxLoadNewVideo);
 	}
 }
