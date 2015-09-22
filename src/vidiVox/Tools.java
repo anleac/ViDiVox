@@ -2,8 +2,12 @@ package vidiVox;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
+
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
@@ -117,22 +121,24 @@ public class Tools {
 
 	}
 
-	public static void speakFestival(String textToSay) {
+	public static int speakFestival(String textToSay) {
 
-		String cmd = "echo " + "\"" + textToSay + "\" | festival --tts &";
+		String cmd = "echo " + "\"" + textToSay + "\" | festival --tts";
 		System.out.println(cmd);
 		
 		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", cmd);
-
+		int pid = 0;
 		try {
-			Process process = pb.start();
-			BufferedReader stdin = new BufferedReader(new InputStreamReader(process.getInputStream()));
-			System.out.println(stdin.readLine());
-			//festID = stdin.readLine().split(" ")[1];
-			//System.out.println(festID);
+			Process p1 = pb.start();
+			Field f = p1.getClass().getDeclaredField("pid");
+			f.setAccessible(true);
+			pid = f.getInt(p1);
+			
 		} catch (Exception e) {
 			displayError("Error using festival speech");
+			return pid;
 		}
+		return pid;
 	}
 
 	public static void writeTextToFile(String text, String fileName) {
@@ -190,18 +196,49 @@ public class Tools {
 
 	}
 
-	public static void killAllFestProc() {
+	public static void killAllFestProc(int pid) {
 
-		String cmd = "killall festival";
+		if (pid != 0){
+			String cmd = "pstree -p " + pid;
+			System.out.println(cmd);
+	/*
+	 * Using the pstree bash command, we find the process named "aplay" associated with festival 
+	 * which is what makes the sound. The pid of this process is found and killed using the "kill -9" command
+	 */
+			ProcessBuilder pb2 = new ProcessBuilder("/bin/bash", "-c", cmd);
+			String line = null;
+			String s = "";
 
-		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", cmd);
-		try {
-			Process process = pb.start();
-			process.waitFor();
-		} catch (Exception e) {
-			displayError("Error killing festival process");
-		}
+			try {
+				Process p2 = pb2.start();
+				InputStream stdout = p2.getInputStream();
+				BufferedReader br = new BufferedReader(new InputStreamReader(stdout));
+				while ((line = br.readLine()) != null) {
+					s += line;
+				}
+				System.out.println(s);
+				int x = s.indexOf("play");
+				String sub = s.substring(x);
+				int length = sub.length();
+				String result = "";
+				for (int i = 0; i < length; i++) {
+					Character character = sub.charAt(i);
+					String s2 = character.toString();
+					if (s2.equals(")")) {
+						break;
+					}
+					if (Character.isDigit(character)) {
+						result += character;
+					}
+				}
+				cmd = "kill -9 " + result;
+				ProcessBuilder pb3 = new ProcessBuilder("/bin/bash", "-c", cmd);
+				pb3.start();
+
+			} catch (IOException e) {
+				System.out.println("Error killing process: " + pid);
+			}
+			}
 
 	}
-
 }

@@ -19,7 +19,7 @@ public class CommentaryFrame extends JFrame {
 	public static CommentaryFrame cmFrame = new CommentaryFrame();
 	private JTextArea textField;
 	public static JCheckBox chckbxApplyThisSpeech;
-
+	public static int currentFestID = 0;
 	/**
 	 * Launch the application.
 	 */
@@ -67,7 +67,7 @@ public class CommentaryFrame extends JFrame {
 					// Too many words
 					Tools.displayError("Number of words should be less than 30");
 				} else {
-					Tools.speakFestival(textToPreview);
+					currentFestID = Tools.speakFestival(textToPreview);
 				}
 
 			}
@@ -111,7 +111,8 @@ public class CommentaryFrame extends JFrame {
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// Stop button clicked
-				Tools.killAllFestProc();
+				System.out.println(currentFestID);
+				Tools.killAllFestProc(currentFestID);
 			}
 		});
 		btnStop.setBackground(Color.WHITE);
