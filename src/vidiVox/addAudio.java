@@ -21,7 +21,7 @@ public class addAudio extends SwingWorker<Void, Void>{
 	
 	@Override
 	protected Void doInBackground() throws Exception {
-		String outVidPath = selectedFile.getAbsolutePath();
+		
 		if (!Tools.hasExtension(outVidPath)){
 			outVidPath += ".avi";
 		}
