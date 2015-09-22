@@ -257,7 +257,7 @@ public class MainFrame extends JFrame {
 				JSlider slider = (JSlider) evt.getSource();
 				int value = slider.getValue();
 				if (slider.getValueIsAdjusting()){
-					theVideo.setTime(value * 1000);	
+					theVideo.setTime(value * 100);	
 				}
 			}
 		});
@@ -402,7 +402,7 @@ public class MainFrame extends JFrame {
 
 		bottomRowButtonsPanel.add(volSlider);
 		
-		Timer t = new Timer(250, new ActionListener() {
+		Timer t = new Timer(25, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				if (videoLoaded) {
@@ -412,36 +412,46 @@ public class MainFrame extends JFrame {
 					if (reverse) t += '-';
 					t += d.format(videoPlayRate) + "x";
 					lblPlayspeedx.setText(t);
-					theVideo.setRate(videoPlayRate);
 					currentTime.setText(Tools.LongToTime(theVideo.getTime()));
-					lengthTime.setText(Tools.LongToTime(theVideo.getMediaMeta().getLength()));
-					int iPos = (int)(theVideo.getTime() / 1000);
-					if (iPos + 1 == slider.getMaximum()){
+					int iPos = (int)(theVideo.getTime() / 100);
+					if (iPos + 1 >= slider.getMaximum()){
 						theVideo.setTime(0);
 						btnPlay.doClick();
 					}
 					if (theVideo.getMediaMeta().getLength() > 0) {
 						slider.setValue(iPos);
-						slider.setMinimum(0);
-						slider.setMaximum((int)(theVideo.getMediaMeta().getLength() / 1000));
-					}
-					if (videoPlayRate > 1f){
-						if (reverse){
-							theVideo.setTime(theVideo.getTime() - (int)((videoPlayRate / (float)4f) * 1000));
-							if (theVideo.getTime() <= 0){
-								videoPlayRate = 1f;
-								reverse = false;
-							}
-						}else{
-							theVideo.setTime(theVideo.getTime() + (int)((videoPlayRate / (float)4f) * 1000));
-						}
 					}
 				}
 			}
 		});
 
 		t.start();
+		
+		Timer t2 = new Timer(200, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				if (videoLoaded) {
+					if (theVideo.getMediaMeta().getLength() > 0) {
+						slider.setMinimum(0);
+						slider.setMaximum((int)(theVideo.getMediaMeta().getLength() / 100));
+					}
+					lengthTime.setText(Tools.LongToTime(theVideo.getMediaMeta().getLength()));
+					if (videoPlayRate > 1f){
+						if (reverse){
+							theVideo.setTime(theVideo.getTime() - (int)((videoPlayRate / (float)5f) * 1000));
+							if (theVideo.getTime() <= 0){
+								videoPlayRate = 1f;
+								reverse = false;
+							}
+						}else{
+							theVideo.setTime(theVideo.getTime() + (int)((videoPlayRate / (float)5f) * 1000));
+						}
+					}
+				}
+			}
+		});
 
+		t2.start();
 	}
 
 }

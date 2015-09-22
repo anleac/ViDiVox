@@ -22,6 +22,7 @@ public class ProgressBarFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
+					pbFrame.setLocationRelativeTo(null);
 					pbFrame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -55,3 +56,4 @@ public class ProgressBarFrame extends JFrame {
 		
 	}
 }
+
