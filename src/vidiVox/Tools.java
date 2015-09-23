@@ -27,7 +27,7 @@ public class Tools {
 
 	public static File openFile() {
 
-		JFileChooser jfc = new JFileChooser();
+		JFileChooser jfc = Tools.ReturnConfirmationChooser();
 		if (lastDir != null) {
 			jfc.setCurrentDirectory(lastDir);
 		}
@@ -79,7 +79,7 @@ public class Tools {
 		String mp3Path = audioFile.getAbsolutePath();
 		String videoPath = videoFile.getAbsolutePath();
 
-		JFileChooser jfc = new JFileChooser();
+		JFileChooser jfc = Tools.ReturnConfirmationChooser();
 		displayInfo("Choose somewhere to save your new video");
 		jfc.showSaveDialog(null);
 
@@ -101,7 +101,7 @@ public class Tools {
 	}
 
 	public static File openMP3File() {
-		JFileChooser jfc = new JFileChooser();
+		JFileChooser jfc = Tools.ReturnConfirmationChooser();
 		if (lastDir != null) {
 			jfc.setCurrentDirectory(lastDir);
 		}
@@ -139,6 +139,38 @@ public class Tools {
 		return pid;
 	}
 
+	/*
+	 * Code for overwrite confirmation within JFileChooser. Retrieved from:
+	 * http://stackoverflow.com/questions/3651494/jfilechooser-with-confirmation-dialog
+	 * On 23/9/15
+	 */
+	public static JFileChooser ReturnConfirmationChooser(){
+		JFileChooser jfc = new JFileChooser(){
+		    @Override
+		    public void approveSelection(){
+		        File f = getSelectedFile();
+		        if(f.exists() && getDialogType() == SAVE_DIALOG){
+		            int result = JOptionPane.showConfirmDialog(this,"The file exists, overwrite?","Existing file",JOptionPane.YES_NO_CANCEL_OPTION);
+		            switch(result){
+		                case JOptionPane.YES_OPTION:
+		                    super.approveSelection();
+		                    return;
+		                case JOptionPane.NO_OPTION:
+		                    return;
+		                case JOptionPane.CLOSED_OPTION:
+		                    return;
+		                case JOptionPane.CANCEL_OPTION:
+		                    cancelSelection();
+		                    return;
+		            }
+		        }
+		        super.approveSelection();
+		    }        
+		};
+		return jfc;
+		
+	}
+	
 	public static void writeTextToFile(String text, String fileName) {
 		PrintWriter pw = null;
 		try {
@@ -156,7 +188,7 @@ public class Tools {
 
 		String wavFullPath = IOHandler.TmpDirectory + "output.wav";
 		String tmpTxtFullPath = IOHandler.TmpDirectory + "txtTmp.txt";
-		JFileChooser jfc = new JFileChooser();
+		JFileChooser jfc = Tools.ReturnConfirmationChooser();
 		displayInfo("Choose where to save the mp3 file");
 		jfc.showSaveDialog(null);
 		File mp3 = jfc.getSelectedFile();
@@ -257,5 +289,14 @@ public class Tools {
 			}
 		}
 
+	}
+	public static boolean doYesNoDialog(String msg){
+		int choice = JOptionPane.showConfirmDialog(null, msg, "Warning!", JOptionPane.YES_NO_OPTION);
+		if (choice == JOptionPane.YES_OPTION){
+			return true;
+		} else {
+			return false;
+		}
+		
 	}
 }
