@@ -85,8 +85,12 @@ public class Tools {
 
 		JFileChooser jfc = Tools.ReturnConfirmationChooser(true);
 		displayInfo("Choose somewhere to save your new video");
-		jfc.showSaveDialog(null);
+		int result = jfc.showSaveDialog(null);
 
+		if (result == JFileChooser.CANCEL_OPTION) {
+			return null;
+		}
+		
 		File f = jfc.getSelectedFile();
 
 		if (f != null) {
@@ -106,6 +110,7 @@ public class Tools {
 
 	public static File openMP3File() {
 		JFileChooser jfc = Tools.ReturnConfirmationChooser(null);
+		jfc.setSelectedFile(new File(IOHandler.Mp3Directory + "Audio"));
 		if (lastDir != null) {
 			jfc.setCurrentDirectory(lastDir);
 		}
@@ -113,9 +118,9 @@ public class Tools {
 		FileFilter ff = new FileNameExtensionFilter("MP3 File", "mp3");
 
 		jfc.setFileFilter(ff);
-		jfc.showOpenDialog(null);
-
+		int res = jfc.showOpenDialog(null);
 		File f = jfc.getSelectedFile();
+		if (res == JFileChooser.CANCEL_OPTION) f = null;
 		if (f != null) {
 			lastDir = f.getParentFile();
 		}
@@ -171,16 +176,20 @@ public class Tools {
 		        super.approveSelection();
 		    }        
 		};
+		String saveTo = "";
 		if (isVideo == null){
 			//generic file no extension
 			return jfc;
-		} else if (isVideo){
+		} else if (isVideo){ //saving a video file, thus give it a default name
 			//is video
-			
+			int len = new File(IOHandler.VideoDirectory).listFiles().length;
+			saveTo = IOHandler.VideoDirectory + "myVideo" + len + ".avi";
 		} else {
 			//is mp3
-			
+			int len = new File(IOHandler.Mp3Directory).listFiles().length;
+			saveTo = IOHandler.Mp3Directory + "myAudio" + len + ".mp3";
 		}
+		jfc.setSelectedFile(new File(saveTo));
 		return jfc;
 		
 	}
@@ -204,9 +213,9 @@ public class Tools {
 		String tmpTxtFullPath = IOHandler.TmpDirectory + "txtTmp.txt";
 		JFileChooser jfc = Tools.ReturnConfirmationChooser(false);
 		displayInfo("Choose where to save the mp3 file");
-		jfc.showSaveDialog(null);
+		int result = jfc.showSaveDialog(null);
 		File mp3 = jfc.getSelectedFile();
-		if (mp3 == null) {
+		if (result == JFileChooser.CANCEL_OPTION) {
 			return;
 		}
 		String mp3FullPath = mp3.getAbsolutePath();

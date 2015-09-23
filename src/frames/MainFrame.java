@@ -209,7 +209,7 @@ public class MainFrame extends JFrame {
 		});
 		northPanel.add(btnAddAudio);
 		
-		JButton btnAddCommentary = new JButton("Add commentary");
+		JButton btnAddCommentary = new JButton("Create commentary audio");
 		btnAddCommentary.setHorizontalAlignment(SwingConstants.LEFT);
 		btnAddCommentary.setBackground(Color.WHITE);
 		btnAddCommentary.addActionListener(new ActionListener() {

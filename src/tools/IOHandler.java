@@ -15,8 +15,9 @@ public class IOHandler {
 	
 	public final static String SaveDirectory = GetSavePath();
 	public final static String AutoSaveDirectory = GetSavePath() + "Autosaves" + File.separator;
+	public final static String VideoDirectory = GetSavePath() + "Videos" + File.separator;
 	public final static String TmpDirectory = GetSavePath() + "Tmp" + File.separator;
-	public final static String Mp3Directory = GetSavePath() + "Autosaves" + File.separator; //for the audio files generated
+	public final static String Mp3Directory = GetSavePath() + "Audio" + File.separator; //for the audio files generated
 	
 	private static String GetSavePath(){
 		
@@ -34,6 +35,7 @@ public class IOHandler {
 		File autoDir = new File(AutoSaveDirectory);
 		File mp3Dir = new File(Mp3Directory);
 		File tmpDir = new File(TmpDirectory);
+		File videoDir = new File(VideoDirectory);
 		// if the directory does not exist, create it
 		if (!mainDir.exists()) {
 		   mainDir.mkdir();
@@ -46,6 +48,9 @@ public class IOHandler {
 		}
 		if (!tmpDir.exists()) {
 			tmpDir.mkdir();
+		}
+		if (!videoDir.exists()) {
+			videoDir.mkdir();
 		}
 	}
 	
