@@ -1,8 +1,10 @@
-package vidiVox;
+package tools;
 
 import java.io.File;
 
 import javax.swing.SwingWorker;
+
+import frames.ProgressBarFrame;
 
 public class addAudio extends SwingWorker<Void, Void>{
 	String mp3Path;

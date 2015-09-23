@@ -1,4 +1,4 @@
-package vidiVox;
+package tools;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,6 +13,10 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
+
+import frames.CommentaryFrame;
+import frames.MainFrame;
+import frames.ProgressBarFrame;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 
 /*

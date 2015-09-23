@@ -1,4 +1,4 @@
-package vidiVox;
+package frames;
 
 import java.awt.EventQueue;
 

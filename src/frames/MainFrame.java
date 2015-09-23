@@ -1,4 +1,4 @@
-package vidiVox;
+package frames;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
@@ -11,8 +11,11 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.metal.MetalSliderUI;
 
+import tools.IOHandler;
+import tools.Tools;
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
+
 import javax.swing.JButton;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
@@ -121,7 +124,7 @@ public class MainFrame extends JFrame {
 		final JButton btnPlay = new JButton(""); // Removed text, testing.
 		btnPlay.setHorizontalAlignment(SwingConstants.LEFT);
 		btnPlay.setBackground(Color.WHITE);
-		btnPlay.setIcon(new ImageIcon(MainFrame.class.getResource("/vidiVox/play.jpg")));
+		btnPlay.setIcon(new ImageIcon(MainFrame.class.getResource("/icons/play.jpg")));
 		btnPlay.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				// Play/Pause button clicked
@@ -130,14 +133,14 @@ public class MainFrame extends JFrame {
 						theVideo.play();
 						theVideo.setRate(1.0f);
 						videoPlaying = true;
-						btnPlay.setIcon(new ImageIcon(MainFrame.class.getResource("/vidiVox/pause.jpg")));
+						btnPlay.setIcon(new ImageIcon(MainFrame.class.getResource("/icons/pause.jpg")));
 					} else {
 						Tools.displayError("You need to open something to play first!");
 					}
 				} else { // was playing, so pause it
 					theVideo.pause();
 					videoPlaying = false; // paused;
-					btnPlay.setIcon(new ImageIcon(MainFrame.class.getResource("/vidiVox/play.jpg")));
+					btnPlay.setIcon(new ImageIcon(MainFrame.class.getResource("/icons/play.jpg")));
 				}
 				reverse = false;
 				videoPlayRate = 1;
@@ -173,12 +176,9 @@ public class MainFrame extends JFrame {
 			}
 		});
 		mnFile.add(mntmCloseProgram);
-
-		JPanel videoPanel = new JPanel();
-		videoPanel.add(Tools.getMediaPlayerComponent());
-
-		contentPane.add(Tools.getMediaPlayerComponent(), BorderLayout.CENTER);
-
+		
+		Component video = Tools.getMediaPlayerComponent();
+		contentPane.add(video, BorderLayout.CENTER);
 		JPanel northPanel = new JPanel();
 		northPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 		northPanel.setPreferredSize(new Dimension(getWidth(), 57));
@@ -283,7 +283,7 @@ public class MainFrame extends JFrame {
 
 		JButton btnStop = new JButton("");
 		btnStop.setActionCommand("");
-		btnStop.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/vidiVox/stop.png"))).getImage())
+		btnStop.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/icons/stop.png"))).getImage())
 				.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
 		btnStop.setBackground(Color.WHITE);
 		btnStop.addActionListener(new ActionListener() {
@@ -294,7 +294,7 @@ public class MainFrame extends JFrame {
 		});
 
 		JButton btnReverse = new JButton("");
-		btnReverse.setIcon(new ImageIcon(MainFrame.class.getResource("/vidiVox/rev.jpg")));
+		btnReverse.setIcon(new ImageIcon(MainFrame.class.getResource("/icons/rev.jpg")));
 		btnReverse.setBackground(Color.WHITE);
 		btnReverse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -315,7 +315,7 @@ public class MainFrame extends JFrame {
 		// btnPause has been removed, and merged into btnPlay.
 
 		JButton btnFastforward = new JButton("");
-		btnFastforward.setIcon(new ImageIcon(MainFrame.class.getResource("/vidiVox/ff.jpg")));
+		btnFastforward.setIcon(new ImageIcon(MainFrame.class.getResource("/icons/ff.jpg")));
 		btnFastforward.setBackground(Color.WHITE);
 		btnFastforward.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -335,7 +335,7 @@ public class MainFrame extends JFrame {
 		volalignment = Box.createHorizontalStrut(getWidth() - 580);
 		final JButton btnVolume = new JButton("");
 		btnVolume.setBackground(Color.WHITE);
-		btnVolume.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/vidiVox/volume.png"))).getImage())
+		btnVolume.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/icons/volume.png"))).getImage())
 				.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
 		bottomRowButtonsPanel.add(volalignment);
 		bottomRowButtonsPanel.add(btnVolume);
@@ -363,15 +363,15 @@ public class MainFrame extends JFrame {
 				// value here
 				if (value == 0) {
 					btnVolume.setIcon(new ImageIcon(
-							((new ImageIcon(MainFrame.class.getResource("/vidiVox/muted.png"))).getImage())
+							((new ImageIcon(MainFrame.class.getResource("/icons/muted.png"))).getImage())
 									.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
 				} else if (value < 50) {
 					btnVolume.setIcon(new ImageIcon(
-							((new ImageIcon(MainFrame.class.getResource("/vidiVox/volumelow.png"))).getImage())
+							((new ImageIcon(MainFrame.class.getResource("/icons/volumelow.png"))).getImage())
 									.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
 				} else {
 					btnVolume.setIcon(new ImageIcon(
-							((new ImageIcon(MainFrame.class.getResource("/vidiVox/volume.png"))).getImage())
+							((new ImageIcon(MainFrame.class.getResource("/icons/volume.png"))).getImage())
 									.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
 				}
 				theVideo.setVolume(value);
@@ -384,22 +384,22 @@ public class MainFrame extends JFrame {
 					int value = volSlider.getValue();
 					if (value == 0) {
 						btnVolume.setIcon(new ImageIcon(
-								((new ImageIcon(MainFrame.class.getResource("/vidiVox/muted.png"))).getImage())
+								((new ImageIcon(MainFrame.class.getResource("/icons/muted.png"))).getImage())
 										.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
 					} else if (value < 50) {
 						btnVolume.setIcon(new ImageIcon(
-								((new ImageIcon(MainFrame.class.getResource("/vidiVox/volumelow.png"))).getImage())
+								((new ImageIcon(MainFrame.class.getResource("/icons/volumelow.png"))).getImage())
 										.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
 					} else {
 						btnVolume.setIcon(new ImageIcon(
-								((new ImageIcon(MainFrame.class.getResource("/vidiVox/volume.png"))).getImage())
+								((new ImageIcon(MainFrame.class.getResource("/icons/volume.png"))).getImage())
 										.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
 					}
 					volSlider.setEnabled(true); // cant change volume anymore
 					isMuted = false;
 				} else {
 					btnVolume.setIcon(new ImageIcon(
-							((new ImageIcon(MainFrame.class.getResource("/vidiVox/muted.png"))).getImage())
+							((new ImageIcon(MainFrame.class.getResource("/icons/muted.png"))).getImage())
 									.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
 					isMuted = true; // toggle the mute..
 					volSlider.setEnabled(false); // can change again!
