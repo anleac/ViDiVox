@@ -422,7 +422,7 @@ public class MainFrame extends JFrame {
 					lblPlayspeedx.setText(t);
 					currentTime.setText(Tools.LongToTime(theVideo.getTime()));
 					int iPos = (int)(theVideo.getTime() / 100);
-					if (iPos + 1 >= slider.getMaximum()){
+					if (iPos + 5 >= slider.getMaximum()){
 						theVideo.setTime(0);
 						btnPlay.doClick();
 					}
