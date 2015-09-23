@@ -27,7 +27,7 @@ public class Tools {
 
 	public static File openFile() {
 
-		JFileChooser jfc = Tools.ReturnConfirmationChooser();
+		JFileChooser jfc = Tools.ReturnConfirmationChooser(null);
 		if (lastDir != null) {
 			jfc.setCurrentDirectory(lastDir);
 		}
@@ -79,7 +79,7 @@ public class Tools {
 		String mp3Path = audioFile.getAbsolutePath();
 		String videoPath = videoFile.getAbsolutePath();
 
-		JFileChooser jfc = Tools.ReturnConfirmationChooser();
+		JFileChooser jfc = Tools.ReturnConfirmationChooser(true);
 		displayInfo("Choose somewhere to save your new video");
 		jfc.showSaveDialog(null);
 
@@ -101,7 +101,7 @@ public class Tools {
 	}
 
 	public static File openMP3File() {
-		JFileChooser jfc = Tools.ReturnConfirmationChooser();
+		JFileChooser jfc = Tools.ReturnConfirmationChooser(null);
 		if (lastDir != null) {
 			jfc.setCurrentDirectory(lastDir);
 		}
@@ -144,7 +144,7 @@ public class Tools {
 	 * http://stackoverflow.com/questions/3651494/jfilechooser-with-confirmation-dialog
 	 * On 23/9/15
 	 */
-	public static JFileChooser ReturnConfirmationChooser(){
+	public static JFileChooser ReturnConfirmationChooser(Boolean isVideo){
 		JFileChooser jfc = new JFileChooser(){
 		    @Override
 		    public void approveSelection(){
@@ -167,6 +167,16 @@ public class Tools {
 		        super.approveSelection();
 		    }        
 		};
+		if (isVideo == null){
+			//generic file no extension
+			return jfc;
+		} else if (isVideo){
+			//is video
+			
+		} else {
+			//is mp3
+			
+		}
 		return jfc;
 		
 	}
@@ -188,7 +198,7 @@ public class Tools {
 
 		String wavFullPath = IOHandler.TmpDirectory + "output.wav";
 		String tmpTxtFullPath = IOHandler.TmpDirectory + "txtTmp.txt";
-		JFileChooser jfc = Tools.ReturnConfirmationChooser();
+		JFileChooser jfc = Tools.ReturnConfirmationChooser(false);
 		displayInfo("Choose where to save the mp3 file");
 		jfc.showSaveDialog(null);
 		File mp3 = jfc.getSelectedFile();
