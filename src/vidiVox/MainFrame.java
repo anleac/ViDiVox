@@ -222,27 +222,6 @@ public class MainFrame extends JFrame {
 			}
 		});
 		northPanel.add(btnAddCommentary);
-		
-		JButton btnRemoveAllOverlay = new JButton("Revert to original");
-		btnRemoveAllOverlay.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				File chosenFile = Tools.openFile();
-				if (chosenFile != null) {
-					String mediaPath = chosenFile.getAbsolutePath();
-					chosenVideoPath = mediaPath;
-					theVideo.prepareMedia(mediaPath);
-					videoLoaded = true;
-					
-					if (!videoPlaying)
-						btnPlay.doClick();
-					//Can now click save button as video is loaded
-					mntmSaveCurrentVideo.setEnabled(true); 
-				}
-			}
-		});
-		btnRemoveAllOverlay.setHorizontalAlignment(SwingConstants.LEFT);
-		btnRemoveAllOverlay.setBackground(Color.WHITE);
-		northPanel.add(btnRemoveAllOverlay);
 
 		JPanel bottomRowButtonsPanel = new JPanel();
 		bottomRowButtonsPanel.setPreferredSize(new Dimension(this.getWidth(), 85));
