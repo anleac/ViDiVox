@@ -9,6 +9,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.plaf.metal.MetalSliderUI;
 
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
@@ -228,7 +229,22 @@ public class MainFrame extends JFrame {
 		contentPane.add(bottomRowButtonsPanel, BorderLayout.SOUTH);
 		bottomRowButtonsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-		final JSlider slider = new JSlider();
+		final JSlider slider = new JSlider(JSlider.HORIZONTAL);
+		slider.setUI(new MetalSliderUI() {
+		    protected void scrollDueToClickInTrack(int direction) {
+		        // this is the default behaviour, let's comment that out
+		        //scrollByBlock(direction);
+
+		        int value = slider.getValue(); 
+
+		        if (slider.getOrientation() == JSlider.HORIZONTAL) {
+		            value = this.valueForXPosition(slider.getMousePosition().x);
+		        } else if (slider.getOrientation() == JSlider.VERTICAL) {
+		            value = this.valueForYPosition(slider.getMousePosition().y);
+		        }
+		        slider.setValue(value);
+		    }
+		});
 		slider.setValue(0);
 		slider.setPreferredSize(new Dimension(this.getWidth() - 20, 20));
 		slider.addChangeListener(new ChangeListener() {
@@ -324,7 +340,20 @@ public class MainFrame extends JFrame {
 		bottomRowButtonsPanel.add(volalignment);
 		bottomRowButtonsPanel.add(btnVolume);
 
-		final JSlider volSlider = new JSlider();
+		final JSlider volSlider = new JSlider(JSlider.HORIZONTAL);
+		volSlider.setUI(new MetalSliderUI() {
+		    protected void scrollDueToClickInTrack(int direction) {
+		        // this is the default behaviour, let's comment that out
+		        //scrollByBlock(direction);
+		        int value = volSlider.getValue(); 
+		        if (volSlider.getOrientation() == JSlider.HORIZONTAL) {
+		            value = this.valueForXPosition(volSlider.getMousePosition().x);
+		        } else if (volSlider.getOrientation() == JSlider.VERTICAL) {
+		            value = this.valueForYPosition(volSlider.getMousePosition().y);
+		        }
+		        volSlider.setValue(value);
+		    }
+		});
 		volSlider.setValue(100);
 		theVideo.setVolume(100);
 		volSlider.addChangeListener(new ChangeListener() {
