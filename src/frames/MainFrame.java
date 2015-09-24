@@ -89,6 +89,9 @@ public class MainFrame extends JFrame {
 	 * Create the frame. Button icons retrieved from:
 	 * http://www.tdcurran.com/sites/tdcurran/images/user/Icons-in-iOS-8/audio-
 	 * controls.png on 15/09/15 at 11:41 a.m
+	 * All of this code is self-generated from the window builder, and is required
+	 * to be inside the constructor.
+	 * Meaning we were un-able to attempt to shorten this method.
 	 */
 	public MainFrame() {
 		setTitle("ViDiVox");
