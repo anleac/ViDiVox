@@ -115,15 +115,6 @@ public class MainFrame extends JFrame {
 		JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
 
-		final JMenuItem mntmSaveCurrentVideo = new JMenuItem("Save current video");
-		mntmSaveCurrentVideo.setEnabled(false); // no video loaded yet to save
-		mntmSaveCurrentVideo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// Save button clicked
-
-			}
-		});
-
 		final JButton btnPlay = new JButton(""); // Removed text, testing.
 		btnPlay.setHorizontalAlignment(SwingConstants.LEFT);
 		btnPlay.setBackground(Color.WHITE);
@@ -164,13 +155,10 @@ public class MainFrame extends JFrame {
 					if (!videoPlaying)
 						btnPlay.doClick();
 					//Can now click save button as video is loaded
-					mntmSaveCurrentVideo.setEnabled(true); 
 				}
 			}
 		});
 		mnFile.add(mntmOpenAVideo);
-
-		mnFile.add(mntmSaveCurrentVideo);
 
 		JMenuItem mntmCloseProgram = new JMenuItem("Close program");
 		mntmCloseProgram.addActionListener(new ActionListener() {
