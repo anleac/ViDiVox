@@ -410,10 +410,10 @@ public class MainFrame extends JFrame {
 					String t = "Playspeed: ";
 					if (reverse) t += '-';
 					t += d.format(videoPlayRate) + "x";
-					lblPlayspeedx.setText(t);
+					lblPlayspeedx.setText(t); //Update the play speed label
 					currentTime.setText(Tools.LongToTime(theVideo.getTime()));
 					int iPos = (int)(theVideo.getTime() / 100);
-					if (iPos + 5 >= slider.getMaximum()){
+					if (iPos + 5 >= slider.getMaximum()){ //Loop back to the start if video has ended
 						theVideo.setTime(0);
 						btnPlay.doClick();
 					}
@@ -425,7 +425,7 @@ public class MainFrame extends JFrame {
 		});
 
 		t.start();
-		
+		//Two different timers as I needed two different 'refresh' rates
 		Timer t2 = new Timer(200, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
@@ -436,7 +436,7 @@ public class MainFrame extends JFrame {
 					}
 					lengthTime.setText(Tools.LongToTime(theVideo.getMediaMeta().getLength()));
 					if (videoPlayRate > 1f){
-						if (reverse){
+						if (reverse){ //This reverses or fast forwrads
 							theVideo.setTime(theVideo.getTime() - (int)((videoPlayRate / (float)5f) * 1000));
 							if (theVideo.getTime() <= 0){
 								videoPlayRate = 1f;

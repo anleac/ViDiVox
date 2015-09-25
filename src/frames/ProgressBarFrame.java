@@ -17,6 +17,8 @@ public class ProgressBarFrame extends JFrame {
 
 	/**
 	 * Launch the application.
+	 * A simple progress bar GUI for when threads are working in the background
+	 * to show the user things are happening.
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {

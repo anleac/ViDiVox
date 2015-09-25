@@ -19,7 +19,12 @@ import javax.swing.JCheckBox;
 
 @SuppressWarnings("serial")
 public class CommentaryFrame extends JFrame {
-
+	/*
+	 * 
+	 * Frame used to add/create 'commentary' (text) into a wave file and add
+	 * to the video loaded.
+	 * This JFrame represents the GUI for it.
+	 */
 	private JPanel contentPane;
 	public static CommentaryFrame cmFrame = new CommentaryFrame();
 	private JTextArea textField;
