@@ -29,8 +29,11 @@ public class Tools {
 	static File lastDir = null;
 	static String festID = null;
 
+	/**
+	 * Simply opens and returns a file choosen by the user.
+	 * @return
+	 */
 	public static File openFile() {
-
 		JFileChooser jfc = Tools.ReturnConfirmationChooser(null);
 		if (lastDir != null) {
 			jfc.setCurrentDirectory(lastDir);
@@ -41,7 +44,6 @@ public class Tools {
 			lastDir = f.getParentFile();
 		}
 		return f;
-
 	}
 
 	// displays the time in a nice format, no in milliseconds
@@ -59,6 +61,10 @@ public class Tools {
 		return toReturn;
 	}
 
+	/**
+	 * Returns the inbuilt media player vlcj has
+	 * @return
+	 */
 	public static EmbeddedMediaPlayerComponent getMediaPlayerComponent() {
 		if (mediaPlayerComponent == null) {
 			mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
@@ -67,38 +73,43 @@ public class Tools {
 
 	}
 
+	/**
+	 * Displays a message
+	 * @param msg
+	 */
 	public static void displayInfo(String msg) {
 		JOptionPane.showMessageDialog(null, msg, "FYI", JOptionPane.INFORMATION_MESSAGE);
 	}
 
+	/**
+	 * Displays an error to the user
+	 * @param msg
+	 */
 	public static void displayError(String msg) {
 		JOptionPane.showMessageDialog(null, msg, "Error", JOptionPane.ERROR_MESSAGE);
 	}
-
+	
+	/**
+	 * Adds a audio file to a video file.
+	 * @param audioFile
+	 * @param videoFile
+	 * @return
+	 */
 	public static String addCustomAudio(File audioFile, File videoFile) {
-		// Is forced to be mp3 from file chooser
-		// Brief says audio is to be automatically added to beginning of video
-
-		
 		String mp3Path = audioFile.getAbsolutePath();
 		String videoPath = videoFile.getAbsolutePath();
 
 		JFileChooser jfc = Tools.ReturnConfirmationChooser(true);
 		displayInfo("Choose somewhere to save your new video");
-		int result = jfc.showSaveDialog(null);
-
-		if (result == JFileChooser.CANCEL_OPTION) {
-			return null;
-		}
 		
-		File f = jfc.getSelectedFile();
-
+		if (jfc.showSaveDialog(null) == JFileChooser.CANCEL_OPTION) return null; //they cancelled.
+		
+		File f = jfc.getSelectedFile(); //the file they selected
 		if (f != null) {
 			ProgressBarFrame.pbFrame.setLocationRelativeTo(null);
-			ProgressBarFrame.pbFrame.setVisible(true);
+			ProgressBarFrame.pbFrame.setVisible(true); //show progress bar to the user
 			
-			addAudio aa = new addAudio(mp3Path, videoPath, f);
-			aa.execute();
+			(new addAudio(mp3Path, videoPath, f)).execute(); //start the swingworker class to add it
 			String outVidPath = f.getAbsolutePath();
 			if (!Tools.hasExtension(outVidPath)){
 				outVidPath += ".avi";
@@ -108,42 +119,42 @@ public class Tools {
 		return null;
 	}
 
+	/**
+	 * opens a given mp3 file (that the user selects)
+	 * and returns it
+	 * @return
+	 */
 	public static File openMP3File() {
 		JFileChooser jfc = Tools.ReturnConfirmationChooser(null);
 		jfc.setSelectedFile(new File(IOHandler.Mp3Directory + "Audio"));
 		if (lastDir != null) {
 			jfc.setCurrentDirectory(lastDir);
 		}
-		// Same as other file chooser, but only allows mp3 files
-		FileFilter ff = new FileNameExtensionFilter("MP3 File", "mp3");
-
-		jfc.setFileFilter(ff);
-		int res = jfc.showOpenDialog(null);
-		File f = jfc.getSelectedFile();
-		if (res == JFileChooser.CANCEL_OPTION) f = null;
-		if (f != null) {
-			lastDir = f.getParentFile();
+		//Limit to only mp3 now
+		jfc.setFileFilter(new FileNameExtensionFilter("MP3 File", "mp3"));
+		if (jfc.showOpenDialog(null) == JFileChooser.CANCEL_OPTION) return null; //they cancelled!
+		if (jfc.getSelectedFile() != null) {
+			lastDir = jfc.getSelectedFile().getParentFile();
 		}
-		return f;
-
+		return jfc.getSelectedFile();
 	}
 
+	/**
+	 * Method which will speak text (with the use of festival)
+	 * and bash
+	 * @param textToSay
+	 * @return
+	 */
 	public static int speakFestival(String textToSay) {
-
-		String cmd = "echo " + "\"" + textToSay + "\" | festival --tts";
-
-		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", cmd);
+		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "echo " + "\"" + textToSay + "\" | festival --tts");
 		int pid = 0;
 		try {
-
 			Process p1 = pb.start();
 			Field f = p1.getClass().getDeclaredField("pid");
-			f.setAccessible(true);
+			f.setAccessible(true); //Using reflection to get the id
 			pid = f.getInt(p1);
-
 		} catch (Exception e) {
 			displayError("Error using festival speech");
-			return pid;
 		}
 		return pid;
 	}
@@ -177,78 +188,68 @@ public class Tools {
 		    }        
 		};
 		String saveTo = "";
-		if (isVideo == null){
-			//generic file no extension
-			return jfc;
-		} else if (isVideo){ //saving a video file, thus give it a default name
-			//is video
-			int len = new File(IOHandler.VideoDirectory).listFiles().length;
-			saveTo = IOHandler.VideoDirectory + "myVideo" + len + ".avi";
-		} else {
-			//is mp3
-			int len = new File(IOHandler.Mp3Directory).listFiles().length;
-			saveTo = IOHandler.Mp3Directory + "myAudio" + len + ".mp3";
+		if (isVideo == null) return jfc; //generic file no extension
+		else if (isVideo){ //saving a video file, thus give it a default name
+			saveTo = IOHandler.VideoDirectory + "myVideo" + new File(IOHandler.VideoDirectory).listFiles().length + ".avi";
+		} else { // mp3
+			saveTo = IOHandler.Mp3Directory + "myAudio" + new File(IOHandler.Mp3Directory).listFiles().length + ".mp3";
 		}
 		jfc.setSelectedFile(new File(saveTo));
 		return jfc;
 		
 	}
 	
+	/**
+	 * A simple method which writes text to a file
+	 * @param text
+	 * @param fileName
+	 */
 	public static void writeTextToFile(String text, String fileName) {
 		PrintWriter pw = null;
 		try {
-			pw = new PrintWriter(IOHandler.TmpDirectory + fileName);
+			(pw = new PrintWriter(IOHandler.TmpDirectory + fileName)).write(text);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		pw.write(text);
 		pw.close();
-
 	}
-
+	
+	/**
+	 * This message takes in same text, and saves that text 
+	 * as a spoken mp3 file, with the magic of festival and ffmpeg
+	 * @param textToSave
+	 */
 	public static void saveFestToMP3(String textToSave) {
-		IOHandler.CheckPaths();
-
 		String wavFullPath = IOHandler.TmpDirectory + "output.wav";
-		String tmpTxtFullPath = IOHandler.TmpDirectory + "txtTmp.txt";
+		String tmpTxtFullPath = IOHandler.TmpDirectory + "txtTmp.txt"; //get the save paths
 		JFileChooser jfc = Tools.ReturnConfirmationChooser(false);
 		displayInfo("Choose where to save the mp3 file");
-		int result = jfc.showSaveDialog(null);
-		File mp3 = jfc.getSelectedFile();
-		if (result == JFileChooser.CANCEL_OPTION) {
-			return;
-		}
-		String mp3FullPath = mp3.getAbsolutePath();
+
+		if (jfc.showSaveDialog(null) == JFileChooser.CANCEL_OPTION) return;
+		String mp3FullPath = jfc.getSelectedFile().getAbsolutePath(); //path of file selected
 		
-		if (!hasExtension(mp3FullPath)){
+		if (!hasExtension(mp3FullPath)){ //make sure it has an extension
 			mp3FullPath += ".mp3";
 		}
 
-		writeTextToFile(textToSave, "txtTmp.txt");
+		writeTextToFile(textToSave, "txtTmp.txt"); //save text to a file for use later in bash
 
-		String cmd1 = "text2wave -o " + wavFullPath + " " + tmpTxtFullPath;
-		String cmd2 = "ffmpeg -i " + wavFullPath + " " + mp3FullPath;
-
-		ProcessBuilder pb1 = new ProcessBuilder("/bin/bash", "-c", cmd1);
-		ProcessBuilder pb2 = new ProcessBuilder("/bin/bash", "-c", cmd2);
+		//Write the bash code
+		ProcessBuilder pb1 = new ProcessBuilder("/bin/bash", "-c", "text2wave -o " + wavFullPath + " " + tmpTxtFullPath);
+		ProcessBuilder pb2 = new ProcessBuilder("/bin/bash", "-c", "ffmpeg -i " + wavFullPath + " " + mp3FullPath);
 
 		try {
-			Process process1 = pb1.start();
-			process1.waitFor();
-			pb2.start();
+			pb1.start().waitFor(); pb2.start(); //run the first process before the 2nd!
 		} catch (Exception e) {
 			displayError("Error saving speech to MP3");
 		}
 		// deleting intermediate files (output.wav and txtTmp)
-		File outputMP3 = new File(mp3FullPath);
-		String newVidPath = null;
-		displayInfo("MP3 file saved to \n" + outputMP3.getAbsolutePath());
+		String newVidPath = null; //for later processing
+		displayInfo("MP3 file saved to \n" + mp3FullPath); //mp3 saved, display where to
 		if (CommentaryFrame.chckbxApplyThisSpeech.isSelected()) {
-			String vidPath = MainFrame.mFrame.chosenVideoPath;
 			// Checkbox is selected upon save button click
-			if (vidPath != null) {
-				File videoFile = new File(vidPath);
-				newVidPath = addCustomAudio(outputMP3, videoFile);
+			if (MainFrame.mFrame.chosenVideoPath != null) {
+				newVidPath = addCustomAudio(new File(mp3FullPath), new File(MainFrame.mFrame.chosenVideoPath));
 			} else {
 				displayError("You need a video opened first to add speech to it");
 			}
@@ -258,17 +259,25 @@ public class Tools {
 			// Checkbox for auto load new video is checked
 			if (newVidPath != null) {
 				MainFrame.mFrame.theVideo.stop();
-				MainFrame.mFrame.chosenVideoPath = newVidPath;
-				
-				MainFrame.mFrame.theVideo.prepareMedia(newVidPath);
+				MainFrame.mFrame.theVideo.prepareMedia(MainFrame.mFrame.chosenVideoPath = newVidPath);
 			}
 		}
 	}
 	
+	/**
+	 * Takes in a string s and determines whether of not it contains an extension
+	 * ie test.avi (based on assumping the filename doesnt contain an . already)
+	 * @param s
+	 * @return
+	 */
 	public static boolean hasExtension(String s){
 		return (s.split(File.separator)[s.split(File.separator).length - 1].contains("."));
 	}
 
+	/**
+	 * Even a process ID, this will kill the script running via bash.
+	 * @param pid
+	 */
 	public static void killAllFestProc(int pid) {
 
 		if (pid != 0) {
@@ -278,34 +287,26 @@ public class Tools {
 			 * associated with festival which is what makes the sound. The pid
 			 * of this process is found and killed using the "kill -9" command
 			 */
-			ProcessBuilder pb2 = new ProcessBuilder("/bin/bash", "-c", cmd);
+			ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", cmd);
 			String line = null;
 			String s = "";
 
 			try {
-				Process p2 = pb2.start();
-				InputStream stdout = p2.getInputStream();
-				BufferedReader br = new BufferedReader(new InputStreamReader(stdout));
-				while ((line = br.readLine()) != null) {
-					s += line;
-				}
-				int x = s.indexOf("play");
-				String sub = s.substring(x);
-				int length = sub.length();
+				Process p = pb.start();
+				BufferedReader br = new BufferedReader(new InputStreamReader(p.getInputStream()));
+				
+				while ((line = br.readLine()) != null) s += line; //read in the output
+				
+				String sub = s.substring(s.indexOf("play")); //"play" corresponds to the festival id
 				String result = "";
-				for (int i = 0; i < length; i++) {
+				for (int i = 0; i < sub.length(); i++) {
 					Character character = sub.charAt(i);
-					String s2 = character.toString();
-					if (s2.equals(")")) {
-						break;
-					}
+					if (character.toString().equals(")")) break; //loop till end of process id bracket is found
 					if (Character.isDigit(character)) {
 						result += character;
 					}
 				}
-				cmd = "kill -9 " + result;
-				ProcessBuilder pb3 = new ProcessBuilder("/bin/bash", "-c", cmd);
-				pb3.start();
+				(new ProcessBuilder("/bin/bash", "-c", "kill -9 " + result)).start(); //Kill the id!
 
 			} catch (IOException e) {
 				System.out.println("Error killing process: " + pid);
@@ -313,13 +314,13 @@ public class Tools {
 		}
 
 	}
+	
+	/**
+	 * A simple JDialog to put up, with a message 'msg' with a yes/no option!
+	 * @param msg
+	 * @return
+	 */
 	public static boolean doYesNoDialog(String msg){
-		int choice = JOptionPane.showConfirmDialog(null, msg, "Warning!", JOptionPane.YES_NO_OPTION);
-		if (choice == JOptionPane.YES_OPTION){
-			return true;
-		} else {
-			return false;
-		}
-		
+		return (JOptionPane.showConfirmDialog(null, msg, "Warning!", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION);
 	}
 }
