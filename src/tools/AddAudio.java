@@ -9,14 +9,14 @@ import frames.ProgressBarFrame;
 /*
  * Swingworker extension for running an ffmpeg command in another thread outside the EDT
  */
-public class addAudio extends SwingWorker<Void, Void>{
+public class AddAudio extends SwingWorker<Void, Void>{
 	String mp3Path;
 	String videoPath;
 	String outVidPath;
 	File selectedFile;
 	
 	//Constructor
-	addAudio(String mp3Path, String videoPath, File selectedFile){
+	AddAudio(String mp3Path, String videoPath, File selectedFile){
 		this.mp3Path = mp3Path;
 		this.videoPath = videoPath;
 		this.selectedFile = selectedFile;
@@ -28,7 +28,7 @@ public class addAudio extends SwingWorker<Void, Void>{
 	@Override
 	protected Void doInBackground() throws Exception {
 		
-		if (!Tools.hasExtension(outVidPath)){
+		if (!FileTools.hasExtension(outVidPath)){
 			outVidPath += ".avi";
 		}
 		//This is the ffmpeg command used to apply selected audio to current video
@@ -45,7 +45,7 @@ public class addAudio extends SwingWorker<Void, Void>{
 			//Waiting for process to end
 			
 		} catch (Exception e) {
-			Tools.displayError("Error adding audio to video");
+			FileTools.displayError("Error adding audio to video");
 		}
 		return null;
 	}
@@ -53,7 +53,7 @@ public class addAudio extends SwingWorker<Void, Void>{
 		//Close the "working..." frame 
 		ProgressBarFrame.pbFrame.setVisible(false);
 		//Displaying success and path in a pop up message upon completion
-		Tools.displayInfo("Video succesfully saved to\n" + outVidPath);
+		FileTools.displayInfo("Video succesfully saved to\n" + outVidPath);
 	}
 	
 	

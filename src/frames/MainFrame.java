@@ -12,7 +12,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.plaf.metal.MetalSliderUI;
 
 import tools.IOHandler;
-import tools.Tools;
+import tools.FileTools;
+import tools.BashTools;
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
@@ -44,7 +45,7 @@ public class MainFrame extends JFrame {
 
 	private JPanel contentPane;
 	public static MainFrame mFrame;
-	public final EmbeddedMediaPlayer theVideo = Tools.getMediaPlayerComponent().getMediaPlayer();
+	public final EmbeddedMediaPlayer theVideo = FileTools.getMediaPlayerComponent().getMediaPlayer();
 	private boolean videoLoaded = false;
 	private float videoPlayRate = 1.0f;
 	public String chosenVideoPath = null;
@@ -129,7 +130,7 @@ public class MainFrame extends JFrame {
 						videoPlaying = true;
 						btnPlay.setIcon(new ImageIcon(MainFrame.class.getResource("/icons/pause.jpg")));
 					} else {
-						Tools.displayError("You need to open something to play first!");
+						FileTools.displayError("You need to open something to play first!");
 					}
 				} else { // was playing, so pause it
 					theVideo.pause();
@@ -145,7 +146,7 @@ public class MainFrame extends JFrame {
 		mntmOpenAVideo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// Open button clicked
-				File chosenFile = Tools.openFile();
+				File chosenFile = FileTools.openFile();
 				if (chosenFile != null) {
 					String mediaPath = chosenFile.getAbsolutePath();
 					chosenVideoPath = mediaPath;
@@ -168,7 +169,7 @@ public class MainFrame extends JFrame {
 		});
 		mnFile.add(mntmCloseProgram);
 		
-		Component video = Tools.getMediaPlayerComponent();
+		Component video = FileTools.getMediaPlayerComponent();
 		contentPane.add(video, BorderLayout.CENTER);
 		JPanel northPanel = new JPanel();
 		northPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
@@ -188,13 +189,13 @@ public class MainFrame extends JFrame {
 		btnAddAudio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				// Audio button clicked
-				File audioFile = Tools.openMP3File();
+				File audioFile = FileTools.openMP3File();
 				File videoFile = new File(chosenVideoPath);
 				if (videoPlaying){
 					btnPlay.doClick();
 				}
 				if (audioFile != null) {
-					Tools.addCustomAudio(audioFile, videoFile);
+					BashTools.addCustomAudio(audioFile, videoFile);
 				}
 			}
 		});
@@ -411,7 +412,7 @@ public class MainFrame extends JFrame {
 					if (reverse) t += '-';
 					t += d.format(videoPlayRate) + "x";
 					lblPlayspeedx.setText(t); //Update the play speed label
-					currentTime.setText(Tools.LongToTime(theVideo.getTime()));
+					currentTime.setText(FileTools.LongToTime(theVideo.getTime()));
 					int iPos = (int)(theVideo.getTime() / 100);
 					if (iPos + 5 >= slider.getMaximum()){ //Loop back to the start if video has ended
 						theVideo.setTime(0);
@@ -434,7 +435,7 @@ public class MainFrame extends JFrame {
 						slider.setMinimum(0);
 						slider.setMaximum((int)(theVideo.getMediaMeta().getLength() / 100));
 					}
-					lengthTime.setText(Tools.LongToTime(theVideo.getMediaMeta().getLength()));
+					lengthTime.setText(FileTools.LongToTime(theVideo.getMediaMeta().getLength()));
 					if (videoPlayRate > 1f){
 						if (reverse){ //This reverses or fast forwrads
 							theVideo.setTime(theVideo.getTime() - (int)((videoPlayRate / (float)5f) * 1000));

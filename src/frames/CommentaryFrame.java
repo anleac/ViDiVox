@@ -1,11 +1,12 @@
 package frames;
 
+import tools.BashTools;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import tools.Tools;
+import tools.FileTools;
 
 import javax.swing.JTextArea;
 import javax.swing.JButton;
@@ -76,9 +77,9 @@ public class CommentaryFrame extends JFrame {
 				// Brief says to limit max number of words to between 20-40
 				if (numWords > 30) {
 					// Too many words
-					Tools.displayError("Number of words should be less than 30");
+					FileTools.displayError("Number of words should be less than 30");
 				} else {
-					currentFestID = Tools.speakFestival(textToPreview);
+					currentFestID = BashTools.speakFestival(textToPreview);
 				}
 
 			}
@@ -109,7 +110,7 @@ public class CommentaryFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				// Save button clicked
 				String textToSave = textField.getText();
-				Tools.saveFestToMP3(textToSave);
+				BashTools.saveFestToMP3(textToSave);
 			}
 		});
 		contentPane.add(btnSave);
@@ -122,7 +123,7 @@ public class CommentaryFrame extends JFrame {
 		btnStop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// Stop button clicked
-				Tools.killAllFestProc(currentFestID);
+				BashTools.killAllFestProc(currentFestID);
 			}
 		});
 		btnStop.setBackground(Color.WHITE);
