@@ -14,6 +14,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.ActionEvent;
+import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JCheckBox;
@@ -32,21 +33,6 @@ public class CommentaryFrame extends JFrame {
 	public static JCheckBox chckbxApplyThisSpeech;
 	public static boolean loadNewVideoIsChecked = false;
 	public static int currentFestID = 0;
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					cmFrame.setVisible(true);
-					cmFrame.setLocationRelativeTo(null);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the frame.
@@ -55,6 +41,7 @@ public class CommentaryFrame extends JFrame {
 		setTitle("Add Commentary");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 458, 269);
+		setUndecorated(true);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -155,5 +142,21 @@ public class CommentaryFrame extends JFrame {
 
         });
 		contentPane.add(chckbxLoadNewVideo);
+		  final JFrame frame = new JFrame();
+		    frame.setUndecorated(true);
+		    JButton button = new JButton("Close Me");
+		    button.addActionListener(new ActionListener() {
+		      public void actionPerformed(ActionEvent e) {
+		        System.exit(0);
+		      }
+		    });
+
+		    frame.setSize(300, 300);
+		    frame.setLocation(200, 200);
+		    frame.setLayout(new BorderLayout());
+
+		    frame.getContentPane().add(button, BorderLayout.NORTH);
+		    frame.getContentPane().add(new JLabel("Drag Me", JLabel.CENTER), BorderLayout.CENTER);
+		    frame.setVisible(true);
 	}
 }

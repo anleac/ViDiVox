@@ -17,8 +17,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import frames.CommentaryFrame;
 import frames.MainFrame;
 import frames.ProgressBarFrame;
-import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 
+import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 /*
  * A class for arbitrary methods.
  * Keeping button logic clean and simple

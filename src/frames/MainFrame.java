@@ -1,6 +1,7 @@
 package frames;
 
 import java.awt.BorderLayout;
+import java.awt.Canvas;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -11,17 +12,22 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.metal.MetalSliderUI;
 
+import com.sun.jna.platform.unix.X11.Window;
+
 import tools.IOHandler;
 import tools.FileTools;
 import tools.BashTools;
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
+import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
+
 
 import javax.swing.JButton;
 import java.awt.FlowLayout;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.awt.event.ActionEvent;
@@ -39,6 +45,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
@@ -168,13 +176,14 @@ public class MainFrame extends JFrame {
 			}
 		});
 		mnFile.add(mntmCloseProgram);
-		
+		final JLayeredPane centrePanel = new JLayeredPane();
 		Component video = FileTools.getMediaPlayerComponent();
 		contentPane.add(video, BorderLayout.CENTER);
+		centrePanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
 		JPanel northPanel = new JPanel();
 		northPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 		northPanel.setPreferredSize(new Dimension(getWidth(), 57));
-		
 		contentPane.add(northPanel, BorderLayout.NORTH);
 		
 		JLabel lblAudioOverlayOptions = new JLabel("Audio Overlay Options:");
@@ -210,6 +219,7 @@ public class MainFrame extends JFrame {
 				if (videoPlaying){
 					btnPlay.doClick();
 				}
+
 				CommentaryFrame.cmFrame.setLocationRelativeTo(null);
 				CommentaryFrame.cmFrame.setVisible(true);
 			}
