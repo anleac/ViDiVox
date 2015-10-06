@@ -18,6 +18,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.border.EtchedBorder;
 
 @SuppressWarnings("serial")
 public class CommentaryFrame extends JFrame {
@@ -38,34 +41,36 @@ public class CommentaryFrame extends JFrame {
 	 * Create the frame.
 	 */
 	public CommentaryFrame() {
+		setResizable(false);
 		setTitle("Add Commentary");
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setBounds(100, 100, 458, 269);
-		setUndecorated(true);
+		setBounds(100, 100, 413, 300);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 
 		textField = new JTextArea();
+		textField.setBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null));
 		textField.setLineWrap(true);
-		textField.setBounds(12, 22, 432, 134);
+		textField.setBounds(25, 39, 173, 121);
 		contentPane.add(textField);
 
 		// Preview button plays text through festival
 		JButton btnPreview = new JButton("Preview");
-		btnPreview.setBounds(15, 168, 133, 25);
+		btnPreview.setBounds(25, 219, 102, 25);
 		btnPreview.setBackground(Color.WHITE);
 		btnPreview.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				// Preview button clicked
 				String textToPreview = textField.getText();
-				int numWords = textToPreview.split(" ").length;
-				// Brief says to limit max number of words to between 20-40
-				if (numWords > 30) {
-					// Too many words
+				//30 words is a good cap
+				if (textToPreview.split(" ").length > 30) { // Too many words
 					FileTools.displayError("Number of words should be less than 30");
 				} else {
+					if (textToPreview.equals("")){ //Error, they entered no text!
+						FileTools.displayError("Please enter some valid text"); return;
+					}
 					currentFestID = BashTools.speakFestival(textToPreview);
 				}
 
@@ -75,13 +80,14 @@ public class CommentaryFrame extends JFrame {
 
 		// Button returns to mainFrame without saving
 		JButton btnBack = new JButton("Back");
-		btnBack.setBounds(311, 168, 133, 25);
+		btnBack.setBounds(267, 219, 110, 25);
 		btnBack.setBackground(Color.WHITE);
 		btnBack.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// Back button clicked
 				// MainFrame was never set to invisible
 				// Simply hide this current frame
+				textField.setText(""); //clear the text
 				cmFrame.setVisible(false);
 				MainFrame.mFrame.requestFocus();
 
@@ -90,73 +96,50 @@ public class CommentaryFrame extends JFrame {
 		contentPane.add(btnBack);
 
 		// Button for saving synth speech as MP3 file
-		JButton btnSave = new JButton("Save");
-		btnSave.setBounds(160, 170, 139, 21);
+		JButton btnSave = new JButton("Save/Apply");
+		btnSave.setBounds(139, 219, 116, 25);
 		btnSave.setBackground(Color.WHITE);
 		btnSave.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// Save button clicked
 				String textToSave = textField.getText();
+				if (textToSave.equals("")){ //Error, they entered no text!
+					FileTools.displayError("Please enter some valid text"); return;
+				}
 				BashTools.saveFestToMP3(textToSave);
 			}
 		});
 		contentPane.add(btnSave);
 
 		JLabel lblWriteTextBelow = new JLabel("Write text below to add to your video (30 word limit)");
-		lblWriteTextBelow.setBounds(12, 0, 378, 15);
+		lblWriteTextBelow.setBounds(21, 12, 378, 15);
 		contentPane.add(lblWriteTextBelow);
-
-		JButton btnStop = new JButton("Stop Preview");
-		btnStop.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// Stop button clicked
-				BashTools.killAllFestProc(currentFestID);
-			}
-		});
-		btnStop.setBackground(Color.WHITE);
-		btnStop.setBounds(15, 205, 133, 25);
-		contentPane.add(btnStop);
-		final JCheckBox chckbxLoadNewVideo = new JCheckBox("Load new video after completion");
-		chckbxApplyThisSpeech = new JCheckBox("Apply audio to a new video");
-		chckbxApplyThisSpeech.setBounds(160, 196, 290, 23);
-		chckbxApplyThisSpeech.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-            	chckbxLoadNewVideo.setEnabled((e.getStateChange() == ItemEvent.SELECTED));
-            	if (chckbxLoadNewVideo.isEnabled() == false){ 
-            		chckbxLoadNewVideo.setSelected(false);
-            		loadNewVideoIsChecked = false;
-            	}
-            	
-            }
-
-        });
+		chckbxApplyThisSpeech = new JCheckBox("<html> Apply audio to video <br> (this will open the add audio window)</html>");
+		chckbxApplyThisSpeech.setBounds(35, 168, 303, 35);
 		contentPane.add(chckbxApplyThisSpeech);
-		chckbxLoadNewVideo.setEnabled(false);
-		chckbxLoadNewVideo.setBounds(160, 216, 290, 23);
-		chckbxLoadNewVideo.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-            	loadNewVideoIsChecked = ((e.getStateChange() == ItemEvent.SELECTED));     	
-            }
-
-        });
-		contentPane.add(chckbxLoadNewVideo);
-		  final JFrame frame = new JFrame();
-		    frame.setUndecorated(true);
-		    JButton button = new JButton("Close Me");
-		    button.addActionListener(new ActionListener() {
-		      public void actionPerformed(ActionEvent e) {
-		        System.exit(0);
-		      }
-		    });
-
-		    frame.setSize(300, 300);
-		    frame.setLocation(200, 200);
-		    frame.setLayout(new BorderLayout());
-
-		    frame.getContentPane().add(button, BorderLayout.NORTH);
-		    frame.getContentPane().add(new JLabel("Drag Me", JLabel.CENTER), BorderLayout.CENTER);
-		    frame.setVisible(true);
+		
+		JLabel lblVoiceSpeed = new JLabel("Voice Speed:");
+		lblVoiceSpeed.setBounds(216, 80, 95, 15);
+		contentPane.add(lblVoiceSpeed);
+		
+		JComboBox speedBox = new JComboBox();
+		speedBox.setModel(new DefaultComboBoxModel(new String[] {"0.10x", "0.20x", "0.30x", "0.40x", "0.50x", "0.60x", "0.70x", "0.80x", "0.90x", "1.00x", "1.10x", "1.20x", "1.30x", "1.40x", "1.50x", "1.60x", "1.70x", "1.80x", "1.90x", "2.00x", "2.10x", "2.20x", "2.30x", "2.40x", "2.50x", "2.60x", "2.70x", "2.80x", "2.90x", "3.00x"}));
+		speedBox.setSelectedIndex(9);
+		speedBox.setBounds(314, 75, 63, 24);
+		contentPane.add(speedBox);
+		
+		JLabel lblSpeakingOptions = new JLabel("Speaking Options");
+		lblSpeakingOptions.setBounds(216, 41, 141, 15);
+		contentPane.add(lblSpeakingOptions);
+		
+		JLabel lblVoicePitch = new JLabel("Pitch change:");
+		lblVoicePitch.setBounds(209, 127, 102, 15);
+		contentPane.add(lblVoicePitch);
+		
+		JComboBox pitchBox = new JComboBox();
+		pitchBox.setModel(new DefaultComboBoxModel(new String[] {"-60Hz", "-50Hz", "-40Hz", "-30Hz", "-20Hz", "-10Hz", "0Hz", "10Hz", "20Hz", "30Hz", "40Hz", "50Hz", "60Hz"}));
+		pitchBox.setSelectedIndex(6);
+		pitchBox.setBounds(314, 122, 63, 24);
+		contentPane.add(pitchBox);
 	}
 }

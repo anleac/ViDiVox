@@ -70,6 +70,7 @@ public class MainFrame extends JFrame {
 	//For the audio controller
 	private boolean isMuted = false;
 	private boolean reverse = false;
+	private final JSlider slider = new JSlider(JSlider.HORIZONTAL);
 
 	/**
 	 * Launch the application.
@@ -93,6 +94,14 @@ public class MainFrame extends JFrame {
 			}
 		});
 	}
+	
+	/**
+	 * Returns the given time of the slider, in mm:ss
+	 * @return
+	 */
+	public String getCurrentTime(){
+		return FileTools.LongToTime(slider.getValue() * 100);
+	}
 
 	/**
 	 * Create the frame. Button icons retrieved from:
@@ -105,7 +114,7 @@ public class MainFrame extends JFrame {
 	public MainFrame() {
 		setTitle("ViDiVox");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 713, 607);
+		setBounds(100, 100, 838, 672);
 
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -198,14 +207,9 @@ public class MainFrame extends JFrame {
 		btnAddAudio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				// Audio button clicked
-				File audioFile = FileTools.openMP3File();
-				File videoFile = new File(chosenVideoPath);
-				if (videoPlaying){
-					btnPlay.doClick();
-				}
-				if (audioFile != null) {
-					BashTools.addCustomAudio(audioFile, videoFile);
-				}
+				if (videoPlaying) btnPlay.doClick(); //pause it
+				AudioFrame.fFrame.setLocationRelativeTo(null);
+				AudioFrame.fFrame.setVisible(true);
 			}
 		});
 		northPanel.add(btnAddAudio);
@@ -231,7 +235,6 @@ public class MainFrame extends JFrame {
 		contentPane.add(bottomRowButtonsPanel, BorderLayout.SOUTH);
 		bottomRowButtonsPanel.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 5));
 
-		final JSlider slider = new JSlider(JSlider.HORIZONTAL);
 		slider.setUI(new MetalSliderUI() {
 		    protected void scrollDueToClickInTrack(int direction) {
 		        // this is the default behaviour, let's comment that out
