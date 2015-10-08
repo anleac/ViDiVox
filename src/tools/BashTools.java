@@ -111,14 +111,6 @@ public class BashTools {
 		// deleting intermediate files (output.wav and txtTmp)
 		String newVidPath = null; //for later processing
 		FileTools.displayInfo("MP3 file saved to \n" + mp3FullPath); //mp3 saved, display where to
-		if (CommentaryFrame.chckbxApplyThisSpeech.isSelected()) {
-			// Checkbox is selected upon save button click
-			if (MainFrame.mFrame.chosenVideoPath != null) {
-				newVidPath = addCustomAudio(new File(mp3FullPath), new File(MainFrame.mFrame.chosenVideoPath));
-			} else {
-				FileTools.displayError("You need a video opened first to add speech to it");
-			}
-		}
 
 		if (CommentaryFrame.cmFrame.loadNewVideoIsChecked) {
 			// Checkbox for auto load new video is checked

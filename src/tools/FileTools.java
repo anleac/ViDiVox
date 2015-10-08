@@ -79,7 +79,7 @@ public class FileTools {
 	 * @param msg
 	 */
 	public static void displayInfo(String msg) {
-		JOptionPane.showMessageDialog(null, msg, "FYI", JOptionPane.INFORMATION_MESSAGE);
+		JOptionPane.showMessageDialog(null, msg, "Important", JOptionPane.INFORMATION_MESSAGE);
 	}
 
 	/**

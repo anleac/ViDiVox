@@ -21,6 +21,9 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.border.EtchedBorder;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import java.awt.Label;
 
 @SuppressWarnings("serial")
 public class CommentaryFrame extends JFrame {
@@ -33,9 +36,10 @@ public class CommentaryFrame extends JFrame {
 	private JPanel contentPane;
 	public static CommentaryFrame cmFrame = new CommentaryFrame();
 	private JTextArea textField;
-	public static JCheckBox chckbxApplyThisSpeech;
 	public static boolean loadNewVideoIsChecked = false;
 	public static int currentFestID = 0;
+	private JTextField textField_1;
+	private JTextField textField_2;
 
 	/**
 	 * Create the frame.
@@ -96,7 +100,7 @@ public class CommentaryFrame extends JFrame {
 		contentPane.add(btnBack);
 
 		// Button for saving synth speech as MP3 file
-		JButton btnSave = new JButton("Save/Apply");
+		JButton btnSave = new JButton("Apply");
 		btnSave.setBounds(139, 219, 116, 25);
 		btnSave.setBackground(Color.WHITE);
 		btnSave.addActionListener(new ActionListener() {
@@ -114,9 +118,6 @@ public class CommentaryFrame extends JFrame {
 		JLabel lblWriteTextBelow = new JLabel("Write text below to add to your video (30 word limit)");
 		lblWriteTextBelow.setBounds(21, 12, 378, 15);
 		contentPane.add(lblWriteTextBelow);
-		chckbxApplyThisSpeech = new JCheckBox("<html> Apply audio to video <br> (this will open the add audio window)</html>");
-		chckbxApplyThisSpeech.setBounds(35, 168, 303, 35);
-		contentPane.add(chckbxApplyThisSpeech);
 		
 		JLabel lblVoiceSpeed = new JLabel("Voice Speed:");
 		lblVoiceSpeed.setBounds(216, 80, 95, 15);
@@ -141,5 +142,40 @@ public class CommentaryFrame extends JFrame {
 		pitchBox.setSelectedIndex(6);
 		pitchBox.setBounds(314, 122, 63, 24);
 		contentPane.add(pitchBox);
+		
+		JLabel label = new JLabel("Time in video:");
+		label.setToolTipText("Time to add the audio into the video");
+		label.setBounds(25, 184, 105, 15);
+		contentPane.add(label);
+		
+		textField_1 = new JTextField();
+		textField_1.setToolTipText("Minutes in the video");
+		textField_1.setText("0");
+		textField_1.setHorizontalAlignment(SwingConstants.RIGHT);
+		textField_1.setColumns(10);
+		textField_1.setBounds(130, 185, 22, 19);
+		contentPane.add(textField_1);
+		
+		textField_2 = new JTextField();
+		textField_2.setToolTipText("Minutes in the video");
+		textField_2.setText("0");
+		textField_2.setHorizontalAlignment(SwingConstants.RIGHT);
+		textField_2.setColumns(10);
+		textField_2.setBounds(169, 185, 23, 19);
+		contentPane.add(textField_2);
+		
+		JButton button = new JButton("Current time");
+		button.setToolTipText("Inserts the current time into the boxes to the left");
+		button.setBackground(Color.WHITE);
+		button.setBounds(216, 179, 161, 25);
+		contentPane.add(button);
+		
+		Label label_1 = new Label("m");
+		label_1.setBounds(152, 184, 15, 21);
+		contentPane.add(label_1);
+		
+		Label label_2 = new Label("s");
+		label_2.setBounds(192, 184, 19, 21);
+		contentPane.add(label_2);
 	}
 }

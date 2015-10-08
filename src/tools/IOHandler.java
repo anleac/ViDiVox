@@ -2,6 +2,8 @@ package tools;
 
 import java.io.*;
 
+import videos.VidProject;
+
 /**
  * A simple class which is used to handle all the file IO.
  * This will keep variables such as where to save files.
@@ -18,11 +20,25 @@ public class IOHandler {
 	public final static String VideoDirectory = GetSavePath() + "Videos" + File.separator;
 	public final static String TmpDirectory = GetSavePath() + "Tmp" + File.separator;
 	public final static String Mp3Directory = GetSavePath() + "Audio" + File.separator; //for the audio files generated
+	public final static String ProjectDirectory = GetSavePath() + "Project" + File.separator; // to save the projects to
 	
+	public final static String ProjectExtension = ".pro";
+	
+	/**
+	 * Gets the default save path, which is located in the home.
+	 * @return
+	 */
 	private static String GetSavePath(){
 		
 		return System.getProperty("user.home") + File.separator + _uniqueName + File.separator;
 		//Will return the directory to save the file to.
+	}
+	
+	/**
+	 * Returns a default new project name, and make sure it is unique.
+	 */
+	public static String GetNewName(){
+		return "newProject" + (new File(IOHandler.Mp3Directory).listFiles().length+1) + ProjectExtension;
 	}
 	
 	/**
@@ -36,22 +52,20 @@ public class IOHandler {
 		File mp3Dir = new File(Mp3Directory);
 		File tmpDir = new File(TmpDirectory);
 		File videoDir = new File(VideoDirectory);
+		File proDir = new File(ProjectDirectory);
+		
 		// if the directory does not exist, create it
-		if (!mainDir.exists()) {
-		   mainDir.mkdir();
-		}
-		if (!autoDir.exists()) {
-		   autoDir.mkdir();
-		}
-		if (!mp3Dir.exists()) {
-			mp3Dir.mkdir();
-		}
-		if (!tmpDir.exists()) {
-			tmpDir.mkdir();
-		}
-		if (!videoDir.exists()) {
-			videoDir.mkdir();
-		}
+		if (!mainDir.exists()) mainDir.mkdir();
+	    if (!autoDir.exists()) autoDir.mkdir();
+		if (!mp3Dir.exists()) mp3Dir.mkdir();
+		if (!tmpDir.exists()) tmpDir.mkdir();
+		if (!videoDir.exists()) videoDir.mkdir();
+		if (!proDir.exists()) proDir.mkdir();
+
+	}
+	
+	public static void SaveProject(VidProject project, String path){
+		
 	}
 	
 }
