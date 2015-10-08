@@ -32,10 +32,20 @@ public class FileTools {
 
 	/**
 	 * Simply opens and returns a file choosen by the user.
+	 * @ext represents the extension to limit it by
 	 * @return
 	 */
-	public static File openFile() {
+	public static File openFile(String type) {
 		JFileChooser jfc = FileTools.ReturnConfirmationChooser(null);
+		if (type == null);
+		else if (type.equals("project")){
+			jfc.setSelectedFile(new File(IOHandler.ProjectDirectory + File.separator + " "));
+			jfc.setFileFilter(new FileNameExtensionFilter("Project file", new String[] {"pro"}));
+		}
+		else{//video
+			jfc.setFileFilter(new FileNameExtensionFilter("Video file", new String[] {"avi", "mp4", "mkv"}));
+		}
+		
 		if (lastDir != null) {
 			jfc.setCurrentDirectory(lastDir);
 		}
@@ -43,6 +53,9 @@ public class FileTools {
 		File f = jfc.getSelectedFile();
 		if (f != null) {
 			lastDir = f.getParentFile();
+			if (type.equals("video")){ //ask if they want to strip audio here.
+				
+			}
 		}
 		return f;
 	}

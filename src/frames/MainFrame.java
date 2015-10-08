@@ -23,6 +23,7 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 import javax.swing.JButton;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -43,6 +44,7 @@ import javax.swing.JSlider;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 
@@ -59,19 +61,19 @@ public class MainFrame extends JFrame {
 	private final String DEFAULT_NAME = "ViDiVox"; // Default application name
 	public String projectName = IOHandler.GetNewName(); // gets the new default
 														// project name
-	
-	public String warning = "No video loaded"; //this is a warning which will appear in the title
+
+	public String warning = "No video loaded"; // this is a warning which will
+												// appear in the title
 
 	private Component volalignment, timealignment, audioAlignment;
-	//this is a flow-diagram hack to allow better alignments.
-	
+	// this is a flow-diagram hack to allow better alignments.
+
 	// For toggling pause/play button
-	private boolean videoPlaying = false;
+	private boolean videoPlaying = false, pendingSaves = false;
 
 	// For the audio controller
 	private boolean isMuted = false, reverse = false;
 	private final JSlider slider = new JSlider(JSlider.HORIZONTAL);
-
 
 	/**
 	 * Launch the application.
@@ -103,6 +105,35 @@ public class MainFrame extends JFrame {
 	public String getCurrentTime() {
 		return FileTools.LongToTime(slider.getValue() * 100);
 	}
+	
+	/**
+	 * Someone has made changes,set the appriopriate variable
+	 */
+	public void ChangesMade() { pendingSaves = true; }
+
+	/**
+	 * Saves the current project
+	 */
+	public void saveProject() {
+		pendingSaves = false;
+	}
+
+	/**
+	 * A method which sets the mainframe to a new project, if pending saves are
+	 * there, it will ask would you like to save.
+	 */
+	public void NewProject() {
+		if (pendingSaves) {
+			int response = JOptionPane.showConfirmDialog(null, "Would you like to save your changes first?", "Confirm",
+					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+			if (response == JOptionPane.YES_OPTION) {
+				saveProject(); // save project before saving
+			} else if (response == JOptionPane.CLOSED_OPTION) {
+				return; // dont do anything!
+			}
+		}
+		videoLoaded = false;
+	}
 
 	/**
 	 * Create the frame. Button icons retrieved from:
@@ -115,15 +146,22 @@ public class MainFrame extends JFrame {
 		setTitle(DEFAULT_NAME + "  -  " + projectName);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 833, 609);
-		final JButton btnPlay = new JButton(""), btnStop = new JButton(""), btnReverse = new JButton(""), btnFastforward = new JButton(""), btnAddCommentary = new JButton("Open Audio Panel");
+		final JButton btnPlay = new JButton(""), btnStop = new JButton(""), btnReverse = new JButton(""),
+				btnFastforward = new JButton(""), btnAddCommentary = new JButton("Open Audio Panel");
 		btnAddCommentary.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				AudioFrame.aFrame.setLocationRelativeTo(MainFrame.mFrame);
+				AudioFrame.aFrame.setLocation(
+						AudioFrame.aFrame.getLocation().x + (MainFrame.mFrame.getSize().width / 2),
+						AudioFrame.aFrame.getLocation().y);
+				AudioFrame.aFrame.setVisible(true);
 			}
 		});
 		btnFastforward.setEnabled(false);
 		btnStop.setEnabled(false);
 		btnReverse.setEnabled(false);
-		btnPlay.setEnabled(false);; // Removed text, testing.
+		btnPlay.setEnabled(false);
+		; // Removed text, testing.
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -164,21 +202,21 @@ public class MainFrame extends JFrame {
 				videoPlayRate = 1;
 			}
 		});
-		
-				JMenuItem mntmOpenAProject = new JMenuItem("Open a project");
-				mntmOpenAProject.addActionListener(new ActionListener() {
-					public void actionPerformed(ActionEvent e) {
-						// Open button clicked
-						File chosenFile = FileTools.openFile();
-						if (chosenFile != null) {
-							String mediaPath = chosenFile.getAbsolutePath();
-							chosenVideoPath = mediaPath;
-							theVideo.prepareMedia(mediaPath);
-							videoLoaded = true;
-						}
-					}
-				});
-				mnFile.add(mntmOpenAProject);
+
+		JMenuItem mntmOpenAProject = new JMenuItem("Open a project");
+		mntmOpenAProject.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				// Open button clicked
+				File chosenFile = FileTools.openFile("project");
+				if (chosenFile != null) {
+					String mediaPath = chosenFile.getAbsolutePath();
+					chosenVideoPath = mediaPath;
+					theVideo.prepareMedia(mediaPath);
+					videoLoaded = true;
+				}
+			}
+		});
+		mnFile.add(mntmOpenAProject);
 
 		JMenuItem mntmNewProject = new JMenuItem("New project");
 		mnFile.add(mntmNewProject);
@@ -206,7 +244,7 @@ public class MainFrame extends JFrame {
 		mntmLoadAVideo.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// Open button clicked
-				File chosenFile = FileTools.openFile();
+				File chosenFile = FileTools.openFile("video");
 				if (chosenFile != null) {
 					String mediaPath = chosenFile.getAbsolutePath();
 					chosenVideoPath = mediaPath;
@@ -344,10 +382,10 @@ public class MainFrame extends JFrame {
 		btnVolume.setBackground(Color.WHITE);
 		btnVolume.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/icons/volume.png"))).getImage())
 				.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
-		
+
 		Component horizontalStrut = Box.createHorizontalStrut(25);
 		bottomRowButtonsPanel.add(horizontalStrut);
-		
+
 		btnAddCommentary.setEnabled(false);
 		btnAddCommentary.setBackground(Color.WHITE);
 		bottomRowButtonsPanel.add(btnAddCommentary);
@@ -427,12 +465,15 @@ public class MainFrame extends JFrame {
 		Timer t = new Timer(25, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				String title = 	DEFAULT_NAME + "  -  " + projectName;
-				if (!warning.equals("")) title += " (" + warning + ")";
-				setTitle(title); //update the title frequently
-				btnPlay.setEnabled(videoLoaded); btnStop.setEnabled(videoLoaded);
-				btnReverse.setEnabled(videoLoaded); btnFastforward.setEnabled(videoLoaded);
-				btnAddCommentary.setEnabled(videoLoaded);
+				String title = DEFAULT_NAME + "  -  " + projectName;
+				if (!warning.equals(""))
+					title += " (" + warning + ")";
+				setTitle(title); // update the title frequently
+				btnPlay.setEnabled(videoLoaded);
+				btnStop.setEnabled(videoLoaded);
+				btnReverse.setEnabled(videoLoaded);
+				btnFastforward.setEnabled(videoLoaded);
+				btnAddCommentary.setEnabled(true);
 				warning = (videoLoaded) ? "" : "No video loaded";
 				if (videoLoaded) {
 					DecimalFormat d = new DecimalFormat();

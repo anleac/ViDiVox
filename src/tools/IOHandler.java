@@ -38,7 +38,7 @@ public class IOHandler {
 	 * Returns a default new project name, and make sure it is unique.
 	 */
 	public static String GetNewName(){
-		return "newProject" + (new File(IOHandler.Mp3Directory).listFiles().length+1) + ProjectExtension;
+		return "newProject" + (new File(IOHandler.ProjectDirectory).listFiles().length+1) + ProjectExtension;
 	}
 	
 	/**

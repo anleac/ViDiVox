@@ -12,6 +12,9 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.border.LineBorder;
 import java.awt.Color;
+import javax.swing.JButton;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 /**
  * A GUI which displays to the user what audio they have already added to the existing
  * project, and an option to add more / remove previous.
@@ -22,6 +25,17 @@ public class AudioFrame extends JFrame {
 
 	private JPanel contentPane;
 	private JTable audioTable;
+	
+	public static AudioFrame aFrame = new AudioFrame();
+	private JLabel lblAudioAddedTo;
+	
+	/**
+	 * Updates the jtable based on any added audio to the video
+	 */
+	public void updateAudio()
+	{
+		
+	}
 
 	/**
 	 * Create the frame.
@@ -49,7 +63,25 @@ public class AudioFrame extends JFrame {
 				"Duration (s)", "Start Time", "Name"
 			}
 		));
-		audioTable.setBounds(54, 75, 238, 261);
+		audioTable.setBounds(37, 74, 269, 279);
 		contentPane.add(audioTable);
+		
+		lblAudioAddedTo = new JLabel("Audio added to current video");
+		lblAudioAddedTo.setBounds(66, 47, 240, 15);
+		contentPane.add(lblAudioAddedTo);
+		
+		JButton btnAddAudio = new JButton("Add Audio");
+		btnAddAudio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				CommentaryFrame.cmFrame.setLocationRelativeTo(null);
+				CommentaryFrame.cmFrame.setVisible(true);
+			}
+		});
+		btnAddAudio.setBounds(37, 365, 128, 25);
+		contentPane.add(btnAddAudio);
+		
+		JButton btnRemoveAudio = new JButton("Remove audio");
+		btnRemoveAudio.setBounds(164, 365, 147, 25);
+		contentPane.add(btnRemoveAudio);
 	}
 }
