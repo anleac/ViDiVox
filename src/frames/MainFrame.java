@@ -20,6 +20,7 @@ import tools.BashTools;
 import uk.co.caprica.vlcj.discovery.NativeDiscovery;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
+import videos.VidProject;
 
 import javax.swing.JButton;
 import java.awt.FlowLayout;
@@ -59,8 +60,6 @@ public class MainFrame extends JFrame {
 	public String chosenVideoPath = null;
 
 	private final String DEFAULT_NAME = "ViDiVox"; // Default application name
-	public String projectName = IOHandler.GetNewName(); // gets the new default
-														// project name
 
 	public String warning = "No video loaded"; // this is a warning which will
 												// appear in the title
@@ -69,11 +68,15 @@ public class MainFrame extends JFrame {
 	// this is a flow-diagram hack to allow better alignments.
 
 	// For toggling pause/play button
-	private boolean videoPlaying = false, pendingSaves = false;
+	private boolean videoPlaying = false, pendingSaves = true;
 
 	// For the audio controller
 	private boolean isMuted = false, reverse = false;
 	private final JSlider slider = new JSlider(JSlider.HORIZONTAL);
+	
+	final JButton btnPlay = new JButton("");
+	
+	public VidProject project = new VidProject(IOHandler.GetNewName(), false); //the current project, default initially
 
 	/**
 	 * Launch the application.
@@ -115,6 +118,12 @@ public class MainFrame extends JFrame {
 	 * Saves the current project
 	 */
 	public void saveProject() {
+		if (!project.IsSaved()){
+			//need to save it to a directory..
+			FileTools.displayInfo("Please select a path to save your project");
+			project.SetPath(FileTools.PickProjectSave(project.getName()));
+		}
+		IOHandler.SaveProject(project);
 		pendingSaves = false;
 	}
 
@@ -123,7 +132,7 @@ public class MainFrame extends JFrame {
 	 * there, it will ask would you like to save.
 	 */
 	public void NewProject() {
-		if (pendingSaves) {
+		if (pendingSaves) { //Check if they'd like to save first
 			int response = JOptionPane.showConfirmDialog(null, "Would you like to save your changes first?", "Confirm",
 					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 			if (response == JOptionPane.YES_OPTION) {
@@ -132,7 +141,13 @@ public class MainFrame extends JFrame {
 				return; // dont do anything!
 			}
 		}
-		videoLoaded = false;
+		if (videoPlaying) btnPlay.doClick();
+		videoPlaying = videoLoaded = false;
+		pendingSaves = true;
+		slider.setValue(0);
+		project = new VidProject(IOHandler.GetNewName(), false);
+		theVideo.release();
+		AudioFrame.aFrame.updateAudio();
 	}
 
 	/**
@@ -143,10 +158,10 @@ public class MainFrame extends JFrame {
 	 * Meaning we were un-able to attempt to shorten this method.
 	 */
 	public MainFrame() {
-		setTitle(DEFAULT_NAME + "  -  " + projectName);
+		setTitle(DEFAULT_NAME);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 833, 609);
-		final JButton btnPlay = new JButton(""), btnStop = new JButton(""), btnReverse = new JButton(""),
+		final JButton btnStop = new JButton(""), btnReverse = new JButton(""),
 				btnFastforward = new JButton(""), btnAddCommentary = new JButton("Open Audio Panel");
 		btnAddCommentary.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -209,21 +224,25 @@ public class MainFrame extends JFrame {
 				// Open button clicked
 				File chosenFile = FileTools.openFile("project");
 				if (chosenFile != null) {
-					String mediaPath = chosenFile.getAbsolutePath();
-					chosenVideoPath = mediaPath;
-					theVideo.prepareMedia(mediaPath);
-					videoLoaded = true;
+					String projectPath = chosenFile.getAbsolutePath();
+					
 				}
 			}
 		});
 		mnFile.add(mntmOpenAProject);
 
 		JMenuItem mntmNewProject = new JMenuItem("New project");
+		mntmNewProject.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				NewProject();
+			}
+		});
 		mnFile.add(mntmNewProject);
 
 		JMenuItem mntmSaveProject = new JMenuItem("Save project");
 		mntmSaveProject.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				saveProject();
 			}
 		});
 		mnFile.add(mntmSaveProject);
@@ -250,7 +269,6 @@ public class MainFrame extends JFrame {
 					chosenVideoPath = mediaPath;
 					theVideo.prepareMedia(mediaPath);
 					videoLoaded = true;
-
 					if (!videoPlaying)
 						btnPlay.doClick();
 					// Can now click save button as video is loaded
@@ -465,9 +483,9 @@ public class MainFrame extends JFrame {
 		Timer t = new Timer(25, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				String title = DEFAULT_NAME + "  -  " + projectName;
-				if (!warning.equals(""))
-					title += " (" + warning + ")";
+				String title = DEFAULT_NAME + "  -  " + project.getName();
+				if (pendingSaves) title += " *";
+				if (!warning.equals("")) title += " (" + warning + ")";
 				setTitle(title); // update the title frequently
 				btnPlay.setEnabled(videoLoaded);
 				btnStop.setEnabled(videoLoaded);

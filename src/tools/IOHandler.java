@@ -64,7 +64,7 @@ public class IOHandler {
 
 	}
 	
-	public static void SaveProject(VidProject project, String path){
+	public static void SaveProject(VidProject project){
 		
 	}
 	

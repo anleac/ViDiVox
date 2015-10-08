@@ -111,6 +111,7 @@ public class CommentaryFrame extends JFrame {
 					FileTools.displayError("Please enter some valid text"); return;
 				}
 				BashTools.saveFestToMP3(textToSave);
+				MainFrame.mFrame.ChangesMade();
 				AudioFrame.aFrame.updateAudio();
 				setVisible(false);
 			}

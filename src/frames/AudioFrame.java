@@ -7,6 +7,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+
 import java.awt.Font;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -34,7 +36,7 @@ public class AudioFrame extends JFrame {
 	 */
 	public void updateAudio()
 	{
-		
+		//check if file doesnt exist, if so, new project!
 	}
 
 	/**
@@ -81,6 +83,16 @@ public class AudioFrame extends JFrame {
 		contentPane.add(btnAddAudio);
 		
 		JButton btnRemoveAudio = new JButton("Remove audio");
+		btnRemoveAudio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				//confirm they want to delete
+				int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this audio?", "Confirm",
+						JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+				if (response == JOptionPane.YES_OPTION) {
+					MainFrame.mFrame.ChangesMade();
+				}
+			}
+		});
 		btnRemoveAudio.setBounds(164, 365, 147, 25);
 		contentPane.add(btnRemoveAudio);
 	}

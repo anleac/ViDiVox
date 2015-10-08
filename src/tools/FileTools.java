@@ -59,6 +59,23 @@ public class FileTools {
 		}
 		return f;
 	}
+	
+	/**
+	 * A method which allows the user to pick where to save their project to.
+	 * @return
+	 */
+	public static String PickProjectSave(String name){
+		JFileChooser jfc = FileTools.ReturnConfirmationChooser(null);
+		jfc.setSelectedFile(new File(IOHandler.ProjectDirectory + name));
+		//Limit to only project
+		jfc.setFileFilter(new FileNameExtensionFilter("Project File", "pro"));
+		if (jfc.showSaveDialog(null) == JFileChooser.CANCEL_OPTION) return null; //they cancelled!
+		String ret = jfc.getSelectedFile().getAbsolutePath();
+		if (!FileTools.hasExtension(ret)){ //make sure it has an extension
+			ret += IOHandler.ProjectExtension;
+		}
+		return ret;
+	}
 
 	// displays the time in a nice format, no in milliseconds
 	public static String LongToTime(long length) {
