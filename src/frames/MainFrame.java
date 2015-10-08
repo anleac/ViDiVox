@@ -59,22 +59,19 @@ public class MainFrame extends JFrame {
 	private final String DEFAULT_NAME = "ViDiVox"; // Default application name
 	public String projectName = IOHandler.GetNewName(); // gets the new default
 														// project name
+	
+	public String warning = "No video loaded"; //this is a warning which will appear in the title
 
-	private Component volalignment, timealignment; // this is a
-																	// 'hack'
-																	// for
-	// flayouts, which will
-	// creates the volume button
-	// being 'pushed' to the
-	// right
-
+	private Component volalignment, timealignment, audioAlignment;
+	//this is a flow-diagram hack to allow better alignments.
+	
 	// For toggling pause/play button
 	private boolean videoPlaying = false;
 
 	// For the audio controller
-	private boolean isMuted = false;
-	private boolean reverse = false;
+	private boolean isMuted = false, reverse = false;
 	private final JSlider slider = new JSlider(JSlider.HORIZONTAL);
+
 
 	/**
 	 * Launch the application.
@@ -83,7 +80,6 @@ public class MainFrame extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-
 					NativeDiscovery nd = new NativeDiscovery();
 					nd.discover();
 					mFrame = new MainFrame();
@@ -119,7 +115,15 @@ public class MainFrame extends JFrame {
 		setTitle(DEFAULT_NAME + "  -  " + projectName);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 833, 609);
-
+		final JButton btnPlay = new JButton(""), btnStop = new JButton(""), btnReverse = new JButton(""), btnFastforward = new JButton(""), btnAddCommentary = new JButton("Open Audio Panel");
+		btnAddCommentary.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		btnFastforward.setEnabled(false);
+		btnStop.setEnabled(false);
+		btnReverse.setEnabled(false);
+		btnPlay.setEnabled(false);; // Removed text, testing.
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -136,7 +140,6 @@ public class MainFrame extends JFrame {
 		JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
 
-		final JButton btnPlay = new JButton(""); // Removed text, testing.
 		btnPlay.setHorizontalAlignment(SwingConstants.LEFT);
 		btnPlay.setBackground(Color.WHITE);
 		btnPlay.setIcon(new ImageIcon(MainFrame.class.getResource("/icons/play.jpg")));
@@ -161,24 +164,24 @@ public class MainFrame extends JFrame {
 				videoPlayRate = 1;
 			}
 		});
+		
+				JMenuItem mntmOpenAProject = new JMenuItem("Open a project");
+				mntmOpenAProject.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						// Open button clicked
+						File chosenFile = FileTools.openFile();
+						if (chosenFile != null) {
+							String mediaPath = chosenFile.getAbsolutePath();
+							chosenVideoPath = mediaPath;
+							theVideo.prepareMedia(mediaPath);
+							videoLoaded = true;
+						}
+					}
+				});
+				mnFile.add(mntmOpenAProject);
 
 		JMenuItem mntmNewProject = new JMenuItem("New project");
 		mnFile.add(mntmNewProject);
-
-		JMenuItem mntmOpenAProject = new JMenuItem("Open a project");
-		mntmOpenAProject.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// Open button clicked
-				File chosenFile = FileTools.openFile();
-				if (chosenFile != null) {
-					String mediaPath = chosenFile.getAbsolutePath();
-					chosenVideoPath = mediaPath;
-					theVideo.prepareMedia(mediaPath);
-					videoLoaded = true;
-				}
-			}
-		});
-		mnFile.add(mntmOpenAProject);
 
 		JMenuItem mntmSaveProject = new JMenuItem("Save project");
 		mntmSaveProject.addActionListener(new ActionListener() {
@@ -271,7 +274,7 @@ public class MainFrame extends JFrame {
 		// To keep the slider at full width when the window resizes
 		addComponentListener(new ComponentAdapter() {
 			public void componentResized(ComponentEvent e) {
-				volalignment.setPreferredSize(new Dimension(getWidth() - 580, 1));
+				volalignment.setPreferredSize(new Dimension(getWidth() - 775, 1));
 				timealignment.setPreferredSize(new Dimension(getWidth() - 295, 1));
 				slider.setPreferredSize(new Dimension(getWidth() - 20, 20));
 			}
@@ -290,7 +293,6 @@ public class MainFrame extends JFrame {
 		bottomRowButtonsPanel.add(btnPlay);
 		bottomRowButtonsPanel.add(Box.createHorizontalStrut(25));
 
-		JButton btnStop = new JButton("");
 		btnStop.setActionCommand("");
 		btnStop.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/icons/stop.png"))).getImage())
 				.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
@@ -302,7 +304,6 @@ public class MainFrame extends JFrame {
 			}
 		});
 
-		JButton btnReverse = new JButton("");
 		btnReverse.setIcon(new ImageIcon(MainFrame.class.getResource("/icons/rev.jpg")));
 		btnReverse.setBackground(Color.WHITE);
 		btnReverse.addActionListener(new ActionListener() {
@@ -321,9 +322,6 @@ public class MainFrame extends JFrame {
 		bottomRowButtonsPanel.add(btnReverse);
 		bottomRowButtonsPanel.add(btnStop);
 
-		// btnPause has been removed, and merged into btnPlay.
-
-		JButton btnFastforward = new JButton("");
 		btnFastforward.setIcon(new ImageIcon(MainFrame.class.getResource("/icons/ff.jpg")));
 		btnFastforward.setBackground(Color.WHITE);
 		btnFastforward.addActionListener(new ActionListener() {
@@ -341,11 +339,18 @@ public class MainFrame extends JFrame {
 			}
 		}); //
 		bottomRowButtonsPanel.add(btnFastforward);
-		volalignment = Box.createHorizontalStrut(getWidth() - 580);
+		volalignment = Box.createHorizontalStrut(getWidth() - 775);
 		final JButton btnVolume = new JButton("");
 		btnVolume.setBackground(Color.WHITE);
 		btnVolume.setIcon(new ImageIcon(((new ImageIcon(MainFrame.class.getResource("/icons/volume.png"))).getImage())
 				.getScaledInstance(16, 16, java.awt.Image.SCALE_SMOOTH)));
+		
+		Component horizontalStrut = Box.createHorizontalStrut(25);
+		bottomRowButtonsPanel.add(horizontalStrut);
+		
+		btnAddCommentary.setEnabled(false);
+		btnAddCommentary.setBackground(Color.WHITE);
+		bottomRowButtonsPanel.add(btnAddCommentary);
 		bottomRowButtonsPanel.add(volalignment);
 		bottomRowButtonsPanel.add(btnVolume);
 
@@ -422,6 +427,13 @@ public class MainFrame extends JFrame {
 		Timer t = new Timer(25, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
+				String title = 	DEFAULT_NAME + "  -  " + projectName;
+				if (!warning.equals("")) title += " (" + warning + ")";
+				setTitle(title); //update the title frequently
+				btnPlay.setEnabled(videoLoaded); btnStop.setEnabled(videoLoaded);
+				btnReverse.setEnabled(videoLoaded); btnFastforward.setEnabled(videoLoaded);
+				btnAddCommentary.setEnabled(videoLoaded);
+				warning = (videoLoaded) ? "" : "No video loaded";
 				if (videoLoaded) {
 					DecimalFormat d = new DecimalFormat();
 					d.setMinimumFractionDigits(2);
