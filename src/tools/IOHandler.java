@@ -11,7 +11,7 @@ import java.io.*;
 
 public class IOHandler {
 	
-	private static String _uniqueName = "VidiVoxNA"; // vidivox nick andrew, should be unique enough..
+	private static String _uniqueName = "VidiVoxNAA"; // vidivox nick andrew andrew, should be unique enough..
 	
 	public final static String SaveDirectory = GetSavePath();
 	public final static String AutoSaveDirectory = GetSavePath() + "Autosaves" + File.separator;

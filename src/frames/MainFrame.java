@@ -158,25 +158,31 @@ public class MainFrame extends JFrame {
 				videoPlayRate = 1;
 			}
 		});
-
-		JMenuItem mntmOpenAVideo = new JMenuItem("Open a video");
-		mntmOpenAVideo.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				// Open button clicked
-				File chosenFile = FileTools.openFile();
-				if (chosenFile != null) {
-					String mediaPath = chosenFile.getAbsolutePath();
-					chosenVideoPath = mediaPath;
-					theVideo.prepareMedia(mediaPath);
-					videoLoaded = true;
-					
-					if (!videoPlaying)
-						btnPlay.doClick();
-					//Can now click save button as video is loaded
-				}
-			}
-		});
-		mnFile.add(mntmOpenAVideo);
+		
+		JMenuItem mntmNewProject = new JMenuItem("New project");
+		mnFile.add(mntmNewProject);
+		
+				JMenuItem mntmOpenAProject = new JMenuItem("Open a project");
+				mntmOpenAProject.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+						// Open button clicked
+						File chosenFile = FileTools.openFile();
+						if (chosenFile != null) {
+							String mediaPath = chosenFile.getAbsolutePath();
+							chosenVideoPath = mediaPath;
+							theVideo.prepareMedia(mediaPath);
+							videoLoaded = true;
+							
+							if (!videoPlaying)
+								btnPlay.doClick();
+							//Can now click save button as video is loaded
+						}
+					}
+				});
+				mnFile.add(mntmOpenAProject);
+		
+		JMenuItem mntmSaveProject = new JMenuItem("Save project");
+		mnFile.add(mntmSaveProject);
 
 		JMenuItem mntmCloseProgram = new JMenuItem("Close program");
 		mntmCloseProgram.addActionListener(new ActionListener() {
@@ -185,6 +191,26 @@ public class MainFrame extends JFrame {
 			}
 		});
 		mnFile.add(mntmCloseProgram);
+		
+		JMenu mnVideo = new JMenu("Video");
+		menuBar.add(mnVideo);
+		
+		JMenuItem mntmLoadAVideo = new JMenuItem("Load a video");
+		mntmLoadAVideo.setToolTipText("Load a video into the current project");
+		mnVideo.add(mntmLoadAVideo);
+		
+		JMenuItem mntmExportVideo = new JMenuItem("Export the video");
+		mntmExportVideo.setToolTipText("Export the project as a video");
+		mnVideo.add(mntmExportVideo);
+		
+		JMenu mnHelp = new JMenu("Help");
+		menuBar.add(mnHelp);
+		
+		JMenuItem mntmInstructions = new JMenuItem("Instructions");
+		mnHelp.add(mntmInstructions);
+		
+		JMenuItem mntmAbout = new JMenuItem("About");
+		mnHelp.add(mntmAbout);
 		final JLayeredPane centrePanel = new JLayeredPane();
 		Component video = FileTools.getMediaPlayerComponent();
 		contentPane.add(video, BorderLayout.CENTER);
