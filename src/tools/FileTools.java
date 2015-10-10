@@ -91,6 +91,12 @@ public class FileTools {
 		toReturn += seconds;
 		return toReturn;
 	}
+	
+	// Converts back
+	public static Long TimeToLong(String time) {
+		int seconds = (int) (Integer.parseInt(time.split(":")[0]) * 60) + Integer.parseInt(time.split(":")[1]);
+		return (long) (seconds * 1000);
+	}
 
 	/**
 	 * Returns the inbuilt media player vlcj has

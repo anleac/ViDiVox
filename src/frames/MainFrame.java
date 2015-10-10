@@ -12,6 +12,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.metal.MetalSliderUI;
 
+import com.sun.jna.platform.FileUtils;
 import com.sun.jna.platform.unix.X11.Window;
 
 import tools.IOHandler;
@@ -55,9 +56,7 @@ public class MainFrame extends JFrame {
 	private JPanel contentPane;
 	public static MainFrame mFrame;
 	public final EmbeddedMediaPlayer theVideo = FileTools.getMediaPlayerComponent().getMediaPlayer();
-	private boolean videoLoaded = false;
 	private float videoPlayRate = 1.0f;
-	public String chosenVideoPath = null;
 
 	private final String DEFAULT_NAME = "ViDiVox"; // Default application name
 
@@ -101,6 +100,17 @@ public class MainFrame extends JFrame {
 	}
 
 	/**
+	 * Pauses the video if its playing AND is loaded
+	 */
+	public void pauseVideo(){
+		if (project.videoLoaded()){
+			if (videoPlaying){
+				btnPlay.doClick();
+			}
+		}
+	}
+	
+	/**
 	 * Returns the given time of the slider, in mm:ss
 	 * 
 	 * @return
@@ -120,7 +130,6 @@ public class MainFrame extends JFrame {
 	public void saveProject() {
 		if (!project.IsSaved()){
 			//need to save it to a directory..
-			FileTools.displayInfo("Please select a path to save your project");
 			project.SetPath(FileTools.PickProjectSave(project.getName()));
 		}
 		IOHandler.SaveProject(project);
@@ -128,10 +137,24 @@ public class MainFrame extends JFrame {
 	}
 
 	/**
-	 * A method which sets the mainframe to a new project, if pending saves are
-	 * there, it will ask would you like to save.
+	 * A method which sets the mainframe to a new project
 	 */
 	public void NewProject() {
+		CheckSaves();
+		if (videoPlaying) btnPlay.doClick();
+		videoPlaying = false;
+		pendingSaves = true;
+		slider.setValue(0);
+		project = new VidProject(IOHandler.GetNewName(), false);
+		theVideo.release();
+		AudioFrame.aFrame.updateAudio();
+	}
+	
+	/**
+	 * Checks if there are any saves pending, and will 
+	 * inform the user to see if they want to save
+	 */
+	private void CheckSaves(){
 		if (pendingSaves) { //Check if they'd like to save first
 			int response = JOptionPane.showConfirmDialog(null, "Would you like to save your changes first?", "Confirm",
 					JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
@@ -141,13 +164,6 @@ public class MainFrame extends JFrame {
 				return; // dont do anything!
 			}
 		}
-		if (videoPlaying) btnPlay.doClick();
-		videoPlaying = videoLoaded = false;
-		pendingSaves = true;
-		slider.setValue(0);
-		project = new VidProject(IOHandler.GetNewName(), false);
-		theVideo.release();
-		AudioFrame.aFrame.updateAudio();
 	}
 
 	/**
@@ -165,6 +181,7 @@ public class MainFrame extends JFrame {
 				btnFastforward = new JButton(""), btnAddCommentary = new JButton("Open Audio Panel");
 		btnAddCommentary.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				AudioFrame.aFrame.updateAudio();
 				AudioFrame.aFrame.setLocationRelativeTo(MainFrame.mFrame);
 				AudioFrame.aFrame.setLocation(
 						AudioFrame.aFrame.getLocation().x + (MainFrame.mFrame.getSize().width / 2),
@@ -200,7 +217,7 @@ public class MainFrame extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				// Play/Pause button clicked
 				if (!videoPlaying) { // was paused or stopped
-					if (videoLoaded) {
+					if (project.videoLoaded()) {
 						theVideo.play();
 						theVideo.setRate(1.0f);
 						videoPlaying = true;
@@ -225,6 +242,18 @@ public class MainFrame extends JFrame {
 				File chosenFile = FileTools.openFile("project");
 				if (chosenFile != null) {
 					String projectPath = chosenFile.getAbsolutePath();
+					CheckSaves();
+					project = IOHandler.LoadProject(projectPath); //load the project
+					if (project.videoLoaded()){
+						project.createVideo(); try {
+							Thread.sleep(100);
+						} catch (InterruptedException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						theVideo.prepareMedia(project.getCustomVideo());
+					}
+					pendingSaves = false;
 					
 				}
 			}
@@ -265,12 +294,20 @@ public class MainFrame extends JFrame {
 				// Open button clicked
 				File chosenFile = FileTools.openFile("video");
 				if (chosenFile != null) {
-					String mediaPath = chosenFile.getAbsolutePath();
-					chosenVideoPath = mediaPath;
-					theVideo.prepareMedia(mediaPath);
-					videoLoaded = true;
-					if (!videoPlaying)
-						btnPlay.doClick();
+					project = new VidProject(IOHandler.GetNewName(), false);
+
+					//Check if they want to strip the current audio of the video
+					int response = JOptionPane.showConfirmDialog(null, "Would you like to strip the current videos audio?", "Confirm",
+							JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+					if (response == JOptionPane.YES_OPTION) {
+						project.StripAudio();
+					}
+					project.setVideo(chosenFile.getAbsolutePath()); //set the video path.
+					project.createVideo();
+					theVideo.prepareMedia(project.getCustomVideo());
+					if (!videoPlaying){
+						btnPlay.setEnabled(true); btnPlay.doClick();
+					}
 					// Can now click save button as video is loaded
 				}
 			}
@@ -487,13 +524,13 @@ public class MainFrame extends JFrame {
 				if (pendingSaves) title += " *";
 				if (!warning.equals("")) title += " (" + warning + ")";
 				setTitle(title); // update the title frequently
-				btnPlay.setEnabled(videoLoaded);
-				btnStop.setEnabled(videoLoaded);
-				btnReverse.setEnabled(videoLoaded);
-				btnFastforward.setEnabled(videoLoaded);
-				btnAddCommentary.setEnabled(true);
-				warning = (videoLoaded) ? "" : "No video loaded";
-				if (videoLoaded) {
+				btnPlay.setEnabled(project.videoLoaded());
+				btnStop.setEnabled(project.videoLoaded());
+				btnReverse.setEnabled(project.videoLoaded());
+				btnFastforward.setEnabled(project.videoLoaded());
+				btnAddCommentary.setEnabled(project.videoLoaded());
+				warning = (project.videoLoaded()) ? "" : "No video loaded";
+				if (project.videoLoaded()) {
 					DecimalFormat d = new DecimalFormat();
 					d.setMinimumFractionDigits(2);
 					String t = "Playspeed: ";
@@ -521,7 +558,7 @@ public class MainFrame extends JFrame {
 		Timer t2 = new Timer(200, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				if (videoLoaded) {
+				if (project.videoLoaded()) {
 					if (theVideo.getMediaMeta().getLength() > 0) {
 						slider.setMinimum(0);
 						slider.setMaximum((int) (theVideo.getMediaMeta().getLength() / 100));

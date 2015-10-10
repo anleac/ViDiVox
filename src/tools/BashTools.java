@@ -8,6 +8,10 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
@@ -57,6 +61,14 @@ public class BashTools {
 		}
 		return null;
 	}
+	
+	
+	/**
+	 * Creates a video based of MainFrames project file.
+	 */
+	public static void createVideo(){
+		
+	}
 
 
 	/**
@@ -83,14 +95,16 @@ public class BashTools {
 	 * This message takes in same text, and saves that text 
 	 * as a spoken mp3 file, with the magic of festival and ffmpeg
 	 * @param textToSave
+	 * @throws IOException 
+	 * @throws UnsupportedAudioFileException 
 	 */
-	public static void saveFestToMP3(String textToSave) {
+	public static double saveFestToMP3(String textToSave) {
 		String wavFullPath = IOHandler.TmpDirectory + "output.wav";
 		String tmpTxtFullPath = IOHandler.TmpDirectory + "txtTmp.txt"; //get the save paths
 		JFileChooser jfc = FileTools.ReturnConfirmationChooser(false);
 		FileTools.displayInfo("Choose where to save the mp3 file");
 
-		if (jfc.showSaveDialog(null) == JFileChooser.CANCEL_OPTION) return;
+		if (jfc.showSaveDialog(null) == JFileChooser.CANCEL_OPTION) return -1;
 		String mp3FullPath = jfc.getSelectedFile().getAbsolutePath(); //path of file selected
 		
 		if (!FileTools.hasExtension(mp3FullPath)){ //make sure it has an extension
@@ -108,17 +122,15 @@ public class BashTools {
 		} catch (Exception e) {
 			FileTools.displayError("Error saving speech to MP3");
 		}
-		// deleting intermediate files (output.wav and txtTmp)
-		String newVidPath = null; //for later processing
-		FileTools.displayInfo("MP3 file saved to \n" + mp3FullPath); //mp3 saved, display where to
 
-		if (CommentaryFrame.cmFrame.loadNewVideoIsChecked) {
-			// Checkbox for auto load new video is checked
-			if (newVidPath != null) {
-				MainFrame.mFrame.theVideo.stop();
-				MainFrame.mFrame.theVideo.prepareMedia(MainFrame.mFrame.chosenVideoPath = newVidPath);
-			}
-		}
+		File f = new File(wavFullPath); //get the length on s of the wav file
+		AudioInputStream audioInputStream = null;
+		try{
+			audioInputStream = AudioSystem.getAudioInputStream(f);
+		} catch (Exception e) {}
+		AudioFormat format = audioInputStream.getFormat();
+		long frames = audioInputStream.getFrameLength();
+		return (frames+0.0) / format.getFrameRate();
 	}
 	
 

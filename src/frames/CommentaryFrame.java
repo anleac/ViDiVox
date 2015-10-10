@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import tools.FileTools;
+import videos.CustomAudio;
 
 import javax.swing.JTextArea;
 import javax.swing.JButton;
@@ -38,8 +39,7 @@ public class CommentaryFrame extends JFrame {
 	private JTextArea textField;
 	public static boolean loadNewVideoIsChecked = false;
 	public static int currentFestID = 0;
-	private JTextField textField_1;
-	private JTextField textField_2;
+	private final JTextField mField, sField;
 
 	/**
 	 * Create the frame.
@@ -110,9 +110,12 @@ public class CommentaryFrame extends JFrame {
 				if (textToSave.equals("")){ //Error, they entered no text!
 					FileTools.displayError("Please enter some valid text"); return;
 				}
-				BashTools.saveFestToMP3(textToSave);
-				MainFrame.mFrame.ChangesMade();
-				AudioFrame.aFrame.updateAudio();
+				double length = BashTools.saveFestToMP3(textToSave);
+				if (length > 0){
+					MainFrame.mFrame.ChangesMade();
+					MainFrame.mFrame.project.AddAudio(new CustomAudio(textToSave, FileTools.TimeToLong(mField.getText() + ":" + sField.getText()), length));
+					AudioFrame.aFrame.updateAudio();
+				}
 				setVisible(false);
 			}
 		});
@@ -151,23 +154,30 @@ public class CommentaryFrame extends JFrame {
 		label.setBounds(25, 184, 105, 15);
 		contentPane.add(label);
 		
-		textField_1 = new JTextField();
-		textField_1.setToolTipText("Minutes in the video");
-		textField_1.setText("0");
-		textField_1.setHorizontalAlignment(SwingConstants.RIGHT);
-		textField_1.setColumns(10);
-		textField_1.setBounds(130, 185, 22, 19);
-		contentPane.add(textField_1);
+		mField = new JTextField();
+		mField.setToolTipText("Minutes in the video");
+		mField.setText("0");
+		mField.setHorizontalAlignment(SwingConstants.RIGHT);
+		mField.setColumns(10);
+		mField.setBounds(130, 185, 22, 19);
+		contentPane.add(mField);
 		
-		textField_2 = new JTextField();
-		textField_2.setToolTipText("Minutes in the video");
-		textField_2.setText("0");
-		textField_2.setHorizontalAlignment(SwingConstants.RIGHT);
-		textField_2.setColumns(10);
-		textField_2.setBounds(169, 185, 23, 19);
-		contentPane.add(textField_2);
+		sField = new JTextField();
+		sField.setToolTipText("Minutes in the video");
+		sField.setText("0");
+		sField.setHorizontalAlignment(SwingConstants.RIGHT);
+		sField.setColumns(10);
+		sField.setBounds(169, 185, 23, 19);
+		contentPane.add(sField);
 		
 		JButton button = new JButton("Current time");
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String[] currentTime = MainFrame.mFrame.getCurrentTime().split(":");
+				sField.setText(currentTime[1]);
+				mField.setText(currentTime[0]);
+			}
+		});
 		button.setToolTipText("Inserts the current time into the boxes to the left");
 		button.setBackground(Color.WHITE);
 		button.setBounds(216, 179, 161, 25);

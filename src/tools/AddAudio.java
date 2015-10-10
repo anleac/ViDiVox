@@ -5,22 +5,21 @@ import java.io.File;
 import javax.swing.SwingWorker;
 
 import frames.ProgressBarFrame;
+import videos.CustomAudio;
+import videos.VidProject;
 
 /*
  * Swingworker extension for running an ffmpeg command in another thread outside the EDT
  */
 public class AddAudio extends SwingWorker<Void, Void>{
-	String mp3Path;
-	String videoPath;
-	String outVidPath;
-	File selectedFile;
-	
+	VidProject project;
+	String videoPath, newVideoPath, tmpAudioPath;
 	//Constructor
-	AddAudio(String mp3Path, String videoPath, File selectedFile){
-		this.mp3Path = mp3Path;
-		this.videoPath = videoPath;
-		this.selectedFile = selectedFile;
-		this.outVidPath = selectedFile.getAbsolutePath();
+	AddAudio(VidProject project){
+		this.project = project;
+		videoPath = project.getCustomVideo();
+		newVideoPath = videoPath + "new";
+		tmpAudioPath = IOHandler.TmpDirectory + "tmp.mp3";
 	}
 	
 	
@@ -28,20 +27,24 @@ public class AddAudio extends SwingWorker<Void, Void>{
 	@Override
 	protected Void doInBackground() throws Exception {
 		
-		if (!FileTools.hasExtension(outVidPath)){
-			outVidPath += ".avi";
-		}
 		//This is the ffmpeg command used to apply selected audio to current video
-		String cmd = "ffmpeg -i " + videoPath + " -i " + mp3Path + " -map 0:v -map 1:a " + outVidPath;
-		
-		
+		String cmd = "ffmpeg -i "+videoPath+" "+tmpAudioPath;
 		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", cmd);
-
+		int counter = 0;
+		//strip the initial audio
 		try {
-			
 			//Running process
 			Process process = pb.start();
 			process.waitFor();
+			if (project.isStripped() && counter++ == 0){ //first loop
+				
+			}else{
+				cmd = "ffmpeg -y -i " + tmpVidDir + " -i " + tmpMp3Dir + " -filter_complex amix=inputs=2 " + outVidPath;
+			}
+			
+			for(CustomAudio a : project.getAudio()){
+				
+			}
 			//Waiting for process to end
 			
 		} catch (Exception e) {
@@ -53,7 +56,7 @@ public class AddAudio extends SwingWorker<Void, Void>{
 		//Close the "working..." frame 
 		ProgressBarFrame.pbFrame.setVisible(false);
 		//Displaying success and path in a pop up message upon completion
-		FileTools.displayInfo("Video succesfully saved to\n" + outVidPath);
+		//reload the video here maybe
 	}
 	
 	
