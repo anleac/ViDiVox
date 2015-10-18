@@ -1,14 +1,8 @@
 package jtools;
 
-import java.awt.FlowLayout;
-
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
-import javax.swing.text.PlainDocument;
 /**
  * An extension of JtextField which limits 
  * the char length (used in add audio)

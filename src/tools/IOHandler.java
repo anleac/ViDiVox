@@ -1,9 +1,10 @@
 package tools;
 
-import java.io.*;
-import java.util.Scanner;
-
-import com.sun.jna.platform.FileUtils;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 
 import videos.CustomAudio;
 import videos.VidProject;
@@ -11,7 +12,8 @@ import videos.VidProject;
 /**
  * A simple class which is used to handle all the file IO. This will keep
  * variables such as where to save files.
- * 
+ * This class holds the default directory for where everything will be saved,
+ * and makes sure all the required files are created when needed.
  * @author andrew
  *
  */
@@ -112,6 +114,7 @@ public class IOHandler {
 				br.newLine();
 			}
 			br.close();
+			project.Saved();
 		} catch (Exception e) {
 			FileTools.displayError("Error occured during file save, please try again.");
 		}

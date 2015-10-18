@@ -3,11 +3,17 @@ package frames;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JProgressBar;
 import javax.swing.JLabel;
-
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.border.EmptyBorder;
+/**
+ * 
+ * @author alea644
+ * A simple JFrame which pops up whenever an intensive task is being preformed
+ * to let the user know so; opposed to is just freezing.
+ *
+ */
 @SuppressWarnings("serial")
 public class ProgressBarFrame extends JFrame {
 
@@ -26,6 +32,7 @@ public class ProgressBarFrame extends JFrame {
 				try {
 					pbFrame.setLocationRelativeTo(null);
 					pbFrame.setVisible(true);
+					pbFrame.setDefaultCloseOperation(0);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

@@ -1,22 +1,11 @@
 package tools;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.lang.reflect.Field;
 
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import javax.swing.SwingWorker;
-import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
-import frames.CommentaryFrame;
-import frames.MainFrame;
-import frames.ProgressBarFrame;
 
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 /*
@@ -29,7 +18,7 @@ public class FileTools {
 
 	static EmbeddedMediaPlayerComponent mediaPlayerComponent = null;
 	static File lastDir = null;
-
+	
 	/**
 	 * Simply opens and returns a file choosen by the user.
 	 * @ext represents the extension to limit it by
@@ -73,6 +62,23 @@ public class FileTools {
 		String ret = jfc.getSelectedFile().getAbsolutePath();
 		if (!FileTools.hasExtension(ret)){ //make sure it has an extension
 			ret += IOHandler.ProjectExtension;
+		}
+		return ret;
+	}
+	
+	/**
+	 * A method which allows the user to pick where to save their video to.
+	 * @return
+	 */
+	public static String PickVideoSave(String name){
+		JFileChooser jfc = FileTools.ReturnConfirmationChooser(null);
+		jfc.setSelectedFile(new File(IOHandler.VideoDirectory + name.replace(".pro", ".avi")));
+		//Limit to only project
+		jfc.setFileFilter(new FileNameExtensionFilter("Video File", ".avi"));
+		if (jfc.showSaveDialog(null) == JFileChooser.CANCEL_OPTION) return null; //they cancelled!
+		String ret = jfc.getSelectedFile().getAbsolutePath();
+		if (!FileTools.hasExtension(ret)){ //make sure it has an extension
+			ret += ".avi";
 		}
 		return ret;
 	}

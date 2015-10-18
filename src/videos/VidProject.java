@@ -6,8 +6,8 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.sun.jna.platform.FileUtils;
-
+import frames.AudioFrame;
+import frames.MainFrame;
 import tools.BashTools;
 import tools.FileTools;
 import tools.IOHandler;
@@ -26,6 +26,11 @@ public class VidProject {
 	
 	String videoPath = ""; //the path in which the projects ORIGINAL video is saved
 	
+	boolean created = false;
+	boolean pendingSaves = true; //to track whether all saves have been changed
+	public void ChangesMade() {pendingSaves = true;} // changes made
+	public boolean PendingSaves() {return pendingSaves;}
+	
 	boolean audioStripped = false; //whether or not the original audio of the video should be removed.
 	
 	public VidProject(String name, boolean isSaved){
@@ -39,15 +44,25 @@ public class VidProject {
 	 * @param a
 	 */
 	public void AddAudio(CustomAudio a){
+		pendingSaves = true; //something changed!
 		addedAudio.add(a);
 	}
 	
 	/**
 	 * Removes audio file from the video
 	 */
-	public void RemoveAudio(){
-		
+	public void RemoveAudio(String remove){
+		pendingSaves = true; //something changed!
+		for (int i = 0; i < addedAudio.size(); i++){
+			if (addedAudio.get(i).text.equals(remove)){
+				addedAudio.remove(i);
+				break; //remove the selected audio
+			}
+		}
+		AudioFrame.aFrame.updateAudio(); //update the audio
 	}
+	
+	
 	
 	public void StripAudio() { audioStripped = true; }
 	public boolean isStripped() {return audioStripped; }
@@ -56,15 +71,35 @@ public class VidProject {
 	 * Creates a video, in the tmp directory.
 	 */
 	public void createVideo(){
-		if (videoLoaded()){ //make sure there is one loaded
+		if (videoPath.equals("") == false){ //make sure there is one loaded
 			File source = new File(videoPath), dest = new File(getCustomVideo() + "tmp");
+			if (dest.exists()) dest.delete();
 			try {
 				Files.copy(source.toPath(), dest.toPath());
 			} catch (IOException e) {
 			    e.printStackTrace();
 			}
 			BashTools.createVideo();
+			created = true;
+			MainFrame.mFrame.loadVideo();
 		}
+	}
+	
+	/**
+	 * Saves the current project
+	 */
+	public void saveProject() {
+		if (!IsSaved()){
+			SetPath(FileTools.PickProjectSave(getName()));
+		}
+		IOHandler.SaveProject(this);
+	}
+	
+	/**
+	 * Called when it is succesfully saved.
+	 */
+	public void Saved(){
+		pendingSaves = false; //no more pending changes.
 	}
 	
 	/**
@@ -85,8 +120,9 @@ public class VidProject {
 	public void changeName(String name) { this.name = name; }
 	public void setVideo(String path) {videoPath = path;}
 	public String getVideo() {return videoPath;}
-	public boolean videoLoaded() {return !videoPath.equals(""); }
+	public boolean videoLoaded() {return !videoPath.equals("") && created; }
 	public String getName() {return name;}
 	public String getPath() {return path;}
 	public List<CustomAudio> getAudio() {return addedAudio;}
+	//getters/setters for variables above.
 }

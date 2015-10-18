@@ -1,28 +1,26 @@
 package frames;
 
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-
-import java.awt.Font;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 import tools.FileTools;
 import videos.CustomAudio;
-
-import javax.swing.border.LineBorder;
-import java.awt.Color;
-import javax.swing.JButton;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.Rectangle;
 
 /**
  * A GUI which displays to the user what audio they have already added to the
@@ -38,6 +36,8 @@ public class AudioFrame extends JFrame {
 
 	public static AudioFrame aFrame = new AudioFrame();
 	private JLabel lblAudioAddedTo;
+	
+	private String selectedAudio = null; //keeps track of the row selected (to delete)
 
 	/**
 	 * Updates the jtable based on any added audio to the video
@@ -45,11 +45,10 @@ public class AudioFrame extends JFrame {
 	public void updateAudio() {
 		DefaultTableModel model = (DefaultTableModel) audioTable.getModel();
 		model.setRowCount(0); // clear it
-		if (MainFrame.mFrame.project.IsSaved()) {
-			for (CustomAudio a: MainFrame.mFrame.project.getAudio()) { // add the player
-															// contents
-				model.addRow(new Object[] { a.getText(),FileTools.LongToTime(a.getStart()), a.getDuration() });
-			}
+		for (CustomAudio a : MainFrame.mFrame.project.getAudio()) { // add the
+																	// player
+			// contents
+			model.addRow(new Object[] { a.getText(), FileTools.LongToTime(a.getStart()), a.getDuration() });
 		}
 	}
 
@@ -69,25 +68,33 @@ public class AudioFrame extends JFrame {
 		lblAudioPanel.setFont(new Font("Dialog", Font.BOLD, 24));
 		lblAudioPanel.setBounds(86, -12, 206, 63);
 		contentPane.add(lblAudioPanel);
-
+		//A visual representation of what audio has been added to the video.
 		audioTable = new JTable();
 		audioTable.setBounds(new Rectangle(100, 0, 100, 0));
 		audioTable.setBorder(new LineBorder(new Color(0, 0, 0)));
-		audioTable.setModel(
-				new DefaultTableModel(
-			new Object[][] {
-				{null, null, null},
-			},
-			new String[] {
-				"Duration (s)", "Start Time", "Name"
-			}
-		));
+		audioTable.setModel(new DefaultTableModel(new Object[][] { { null, null, null }, },
+				new String[] { "Name", "Start Time", "Duration (s)" }));
 		audioTable.setBounds(37, 74, 269, 279);
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setBorder(null);
 		scrollPane.setBounds(37, 74, 269, 279);
 		contentPane.add(scrollPane);
+		final JButton btnRemoveAudio = new JButton("Remove audio");
 		
+		//handles the row selection listener, will need to enable/disable remove audio accordingly
+		audioTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+		    @Override
+		    public void valueChanged(ListSelectionEvent event) {
+		        if (audioTable.getSelectedRow() > -1) {
+		            //extracts the name
+		            selectedAudio = audioTable.getValueAt(audioTable.getSelectedRow(), 0).toString();
+		            btnRemoveAudio.setEnabled(true);
+		        }else{
+		        	btnRemoveAudio.setEnabled(false);
+		        }
+		    }
+		});
+
 		scrollPane.setViewportView(audioTable);
 
 		lblAudioAddedTo = new JLabel("Audio added to current video");
@@ -99,13 +106,14 @@ public class AudioFrame extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				CommentaryFrame.cmFrame.setLocationRelativeTo(null);
 				CommentaryFrame.cmFrame.setVisible(true);
+				//MainFrame.mFrame.setEnabled(false);
+				//aFrame.setEnabled(false);
 				MainFrame.mFrame.pauseVideo();
 			}
 		});
 		btnAddAudio.setBounds(37, 365, 128, 25);
 		contentPane.add(btnAddAudio);
-
-		JButton btnRemoveAudio = new JButton("Remove audio");
+		
 		btnRemoveAudio.setEnabled(false);
 		btnRemoveAudio.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -113,7 +121,7 @@ public class AudioFrame extends JFrame {
 				int response = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete this audio?",
 						"Confirm", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
 				if (response == JOptionPane.YES_OPTION) {
-					MainFrame.mFrame.ChangesMade();
+					MainFrame.mFrame.project.RemoveAudio(selectedAudio);
 				}
 			}
 		});
