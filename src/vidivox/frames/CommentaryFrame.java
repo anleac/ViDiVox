@@ -10,19 +10,16 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.text.AbstractDocument;
 
 import vidivox.frames.commentaryframe.LimitDocumentFilter;
@@ -30,8 +27,6 @@ import vidivox.frames.commentaryframe.TextDocumentListener;
 import vidivox.projects.CustomAudio;
 import vidivox.tools.BashTools;
 import vidivox.tools.FileTools;
-
-import javax.swing.JRadioButton;
 
 /**
  * A JFrame which handles the GUI components of adding mp3s to the video (this

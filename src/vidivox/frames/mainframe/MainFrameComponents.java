@@ -13,7 +13,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.plaf.metal.MetalSliderUI;
 
 import vidivox.frames.MainFrame;
-import vidivox.tools.FileTools;
 
 /**
  * Essentially is a factory method class;

@@ -31,6 +31,7 @@ import javax.swing.border.EmptyBorder;
 
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import vidivox.frames.mainframe.GuiUpdaterActionListener;
+import vidivox.frames.mainframe.HelpMenu;
 import vidivox.frames.mainframe.MainFrameComponents;
 import vidivox.frames.mainframe.VideoTrackActionListener;
 import vidivox.projects.VidProject;
@@ -180,7 +181,7 @@ public class MainFrame extends JFrame {
 		createMenuBarGui();
 		setUpGui();
 	}
-
+		
 	/**
 	 * Creates all of the JMenuBar GUI componenets and adds it to the JFrame
 	 */
@@ -255,6 +256,7 @@ public class MainFrame extends JFrame {
 		});
 		mnVideo.add(mnLoad);
 		mnVideo.add(mnExport); // add them
+		menuBar.add(HelpMenu.getHelpMenu()); //add the help menu
 	}
 
 	/**

@@ -210,7 +210,7 @@ public class FileTools {
 		PrintWriter pw = null;
 		try {
 			(pw = new PrintWriter(IOHandler.TmpDirectory() + fileName)).write(text);
-		} catch (Exception e) {
+		} catch (Exception e) { //Write the text to the file
 			e.printStackTrace();
 		}
 		pw.close();
@@ -234,7 +234,7 @@ public class FileTools {
 	 */
 	public static boolean doYesNoDialog(String msg){
 		Integer reponse = (JOptionPane.showConfirmDialog(null, msg, "Information required", JOptionPane.YES_NO_OPTION));
-		if (reponse == null) return false; //check for null first
-		return (reponse == JOptionPane.YES_OPTION); //else is it yes?
+		//check for null first
+		return (reponse == null)? false : (reponse == JOptionPane.YES_OPTION); //else is it yes?
 	}
 }
