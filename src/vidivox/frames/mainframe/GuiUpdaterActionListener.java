@@ -52,12 +52,14 @@ public class GuiUpdaterActionListener implements ActionListener {
 					MainFrame.mFrame.CurrentTime().setText(FileTools.LongToTime(MainFrame.mFrame.Video().getTime()));
 					int iPos = (int) (MainFrame.mFrame.Video().getTime() / 100);
 					if (iPos + 5 >= MainFrame.mFrame.TimeSlider().getMaximum()) { 
-						MainFrame.mFrame.Video().setTime(0);
+						MainFrame.mFrame.Video().setTime(0); //if it reaches the end, we reset it
+						//and pause it
 						MainFrame.mFrame.btnPlay.doClick();
 					}
 					if (MainFrame.mFrame.Video().getMediaMeta().getLength() > 0) {
-						MainFrame.mFrame.TimeSlider().setValue(iPos);
+						MainFrame.mFrame.TimeSlider().setValue(iPos); //keep updating the slider with the video
 					}
+					MainFrame.mFrame.mnNew.setEnabled(true);
 					MainFrame.mFrame.LblVideo().setText("Video loaded: " + MainFrame.mFrame.VProject().getVideoName());
 				}else{
 					//video isnt loaded!

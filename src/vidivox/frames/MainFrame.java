@@ -78,7 +78,7 @@ public class MainFrame extends JFrame {
 	public final JButton btnPlay = new JButton(""), btnVolume = MainFrameComponents.createVolumeButton();
 	// used to start/stop the video, and controlling the volume
 	
-	public final JMenuItem mnExport = new JMenuItem("Export video");
+	public final JMenuItem mnExport = new JMenuItem("Export video"), mnNew = new JMenuItem("New project");
 	private VidProject project = new VidProject(IOHandler.GetNewName(), false);
 	public VidProject VProject() {return project;}
 	//the project used
@@ -107,6 +107,8 @@ public class MainFrame extends JFrame {
 	 * states.
 	 */
 	public void resetVideo() {
+		if (videoPlaying)
+			btnPlay.doClick(); //make sure nothings 'playing'
 		if (!project.getVideo().equals("")) {
 			timeSlider.setValue(0);
 			mFrame.setEnabled(false); // disable this until its completely finished
@@ -140,6 +142,7 @@ public class MainFrame extends JFrame {
 		CheckSaves();
 		project = new VidProject(IOHandler.GetNewName(), false);
 		resetVideo();
+		mnNew.setEnabled(false); //can not re-new a new project
 	}
 	
 	/**
@@ -187,10 +190,9 @@ public class MainFrame extends JFrame {
 		setJMenuBar(menuBar); // create the headers
 		JMenu mnFile = new JMenu("File"), mnVideo = new JMenu("Video");
 		menuBar.add(mnFile);	menuBar.add(mnVideo);
-
+		mnNew.setEnabled(false);
 		// create items to go inside the JMenus
-		JMenuItem mnOpen = new JMenuItem("Open project"), mnNew = new JMenuItem(
-				"New project"), mnSave = new JMenuItem("Save Project");
+		JMenuItem mnOpen = new JMenuItem("Open project"), mnSave = new JMenuItem("Save Project");
 		mnOpen.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) { // clicked on
 				File chosenFile = FileTools.openFile("project");
