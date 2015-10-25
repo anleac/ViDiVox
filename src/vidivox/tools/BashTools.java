@@ -1,4 +1,4 @@
-package tools;
+package vidivox.tools;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,8 +12,9 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFileChooser;
 
-import frames.MainFrame;
-import frames.ProgressBarFrame;
+import vidivox.frames.MainFrame;
+import vidivox.frames.ProgressBarFrame;
+import vidivox.tools.workers.AudioWorker;
 
 /*
  * A class for arbitrary methods.
@@ -32,9 +33,7 @@ public class BashTools {
 	 * @return
 	 */
 	public static void createVideo() {
-		ProgressBarFrame.pbFrame.setLocationRelativeTo(null);
-		ProgressBarFrame.pbFrame.setVisible(true);
-		(new AudioWorker(MainFrame.mFrame.project)).execute();
+		(new AudioWorker(MainFrame.mFrame.VProject())).execute();
 	}
 
 	/**
@@ -43,65 +42,69 @@ public class BashTools {
 	 * @param textToSay
 	 * @return
 	 */
-	public static int speakFestival(String textToSay) {
-		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "echo " + "\"" + textToSay + "\" | festival --tts");
-		int pid = 0;
-		try {
-			Process p1 = pb.start();
-			Field f = p1.getClass().getDeclaredField("pid");
-			f.setAccessible(true); // Using reflection to get the id
-			pid = f.getInt(p1);
-		} catch (Exception e) {
-			FileTools.displayError("Error using festival speech");
-		}
-		return pid;
+	public static void speakFestival(String textToSay, String voice) {
+		saveFestToMP3(textToSay, voice, true); //save it first
+		speakMp3(IOHandler.TmpDirectory() + "output.wav"); //speak it
 	}
+	
+	/**
+	 * Method which will play an mp3 file through bash
+	 * 
+	 * @param textToSay
+	 * @return
+	 */
+	public static void speakMp3(String filePath) {
+		ProcessBuilder pb = new ProcessBuilder("/bin/bash", "-c", "cvlc " + filePath);
+		System.out.println("cvlc " + filePath);
+		try {
+			pb.start();
+		} catch (Exception e) {
+			FileTools.displayError("Error playing the mp3 file");
+		}
+	}
+
 
 	/**
 	 * This message takes in same text, and saves that text as a spoken mp3
 	 * file, with the magic of festival and ffmpeg
+	 * The voice is an option which the user can choose.
 	 * 
+	 * tmp represents whether or not it should be saved, or just created to preview
 	 * @param textToSave
 	 * @throws IOException
 	 * @throws UnsupportedAudioFileException
 	 */
-	public static double saveFestToMP3(String textToSave) {
-		String wavFullPath = IOHandler.TmpDirectory + "output.wav";
-		String tmpTxtFullPath = IOHandler.TmpDirectory + "txtTmp.txt"; // get
-																		// the
-																		// save
-																		// paths
-		JFileChooser jfc = FileTools.ReturnConfirmationChooser(false);
-		FileTools.displayInfo("Choose where to save the mp3 file");
-
-		if (jfc.showSaveDialog(null) == JFileChooser.CANCEL_OPTION)
-			return -1;
-		String mp3FullPath = jfc.getSelectedFile().getAbsolutePath(); // path of
-																		// file
-																		// selected
-
-		if (!FileTools.hasExtension(mp3FullPath)) { // make sure it has an
-													// extension
-			mp3FullPath += ".mp3";
+	public static double saveFestToMP3(String textToSave, String voice, boolean tmp) {
+		String wavFullPath = IOHandler.TmpDirectory() + "output.wav";
+		String tmpTxtFullPath = IOHandler.TmpDirectory() + "txtTmp.txt"; //tmp directories
+		String mp3FullPath = "";
+		if (!tmp){ //if its not a tmp file, let the user pick where to save it
+			JFileChooser jfc = FileTools.ReturnConfirmationChooser(false);
+			FileTools.displayInfo("Choose where to save the mp3 file");
+	
+			if (jfc.showSaveDialog(null) == JFileChooser.CANCEL_OPTION)
+				return -1;
+			mp3FullPath = jfc.getSelectedFile().getAbsolutePath(); 
+			if (!FileTools.hasExtension(mp3FullPath)) { // make sure it has an	extension
+				mp3FullPath += ".mp3";
+			}
 		}
-
-		FileTools.writeTextToFile(textToSave, "txtTmp.txt"); // save text to a
-																// file for use
-																// later in bash
+		FileTools.writeTextToFile(textToSave, "txtTmp.txt");
 
 		// Write the bash code
 		ProcessBuilder pb1 = new ProcessBuilder("/bin/bash", "-c",
-				"text2wave -o " + wavFullPath + " " + tmpTxtFullPath);
+				"text2wave -o " + wavFullPath + " " + tmpTxtFullPath + " -eval \"" + voice + "\"");
 		ProcessBuilder pb2 = new ProcessBuilder("/bin/bash", "-c", "ffmpeg -i " + wavFullPath + " " + mp3FullPath);
 
 		try {
 			pb1.start().waitFor();
+			if (tmp) return 0; //can end here as we can play the wav file
 			pb2.start(); // run the first process before the 2nd!
 		} catch (Exception e) {
 			FileTools.displayError("Error saving speech to MP3");
 		}
 
-		File f = new File(wavFullPath); // get the length on s of the wav file
+		File f = new File(wavFullPath); // get the length in (s) of the wav file
 		AudioInputStream audioInputStream = null;
 		try {
 			audioInputStream = AudioSystem.getAudioInputStream(f);
@@ -109,7 +112,14 @@ public class BashTools {
 		}
 		AudioFormat format = audioInputStream.getFormat();
 		long frames = audioInputStream.getFrameLength();
-		return (frames + 0.0) / format.getFrameRate();
+		double ret = (frames + 0.0) / format.getFrameRate();
+		try {
+			audioInputStream.close(); //try to close it
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return ret;
 	}
 
 	/**

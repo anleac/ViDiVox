@@ -1,4 +1,4 @@
-package jtools;
+package vidivox.frames.commentaryframe;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;

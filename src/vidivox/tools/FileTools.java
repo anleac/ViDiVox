@@ -1,4 +1,4 @@
-package tools;
+package vidivox.tools;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -28,25 +28,36 @@ public class FileTools {
 		JFileChooser jfc = FileTools.ReturnConfirmationChooser(null);
 		if (type == null);
 		else if (type.equals("project")){
-			jfc.setSelectedFile(new File(IOHandler.ProjectDirectory + File.separator + " "));
+			jfc.setSelectedFile(new File(IOHandler.ProjectDirectory() + File.separator + " "));
 			jfc.setFileFilter(new FileNameExtensionFilter("Project file", new String[] {"pro"}));
 		}
 		else{//video
+			if (lastDir != null) {
+				jfc.setCurrentDirectory(lastDir);
+			}
 			jfc.setFileFilter(new FileNameExtensionFilter("Video file", new String[] {"avi", "mp4", "mkv"}));
-		}
-		
-		if (lastDir != null) {
-			jfc.setCurrentDirectory(lastDir);
 		}
 		jfc.showOpenDialog(null);
 		File f = jfc.getSelectedFile();
 		if (f != null) {
 			lastDir = f.getParentFile();
-			if (type.equals("video")){ //ask if they want to strip audio here.
-				
-			}
 		}
 		return f;
+	}
+	
+	/**
+	 * A method which allows the user to pick where their
+	 * workspace should be for Vidivox
+	 * @return
+	 */
+	public static String PickWorkspace(){
+		JFileChooser jfc = FileTools.ReturnConfirmationChooser(null);
+		jfc.setAcceptAllFileFilterUsed(true); //override this 
+		jfc.setSelectedFile(new File(System.getProperty("user.home")));
+		jfc.setFileSelectionMode( JFileChooser.DIRECTORIES_ONLY); //only directories to pick
+		if (jfc.showOpenDialog(null) == JFileChooser.CANCEL_OPTION) return ""; //they cancelled!
+		String ret = jfc.getSelectedFile().getAbsolutePath();
+		return ret;
 	}
 	
 	/**
@@ -55,7 +66,7 @@ public class FileTools {
 	 */
 	public static String PickProjectSave(String name){
 		JFileChooser jfc = FileTools.ReturnConfirmationChooser(null);
-		jfc.setSelectedFile(new File(IOHandler.ProjectDirectory + name));
+		jfc.setSelectedFile(new File(IOHandler.ProjectDirectory() + name));
 		//Limit to only project
 		jfc.setFileFilter(new FileNameExtensionFilter("Project File", "pro"));
 		if (jfc.showSaveDialog(null) == JFileChooser.CANCEL_OPTION) return null; //they cancelled!
@@ -72,7 +83,7 @@ public class FileTools {
 	 */
 	public static String PickVideoSave(String name){
 		JFileChooser jfc = FileTools.ReturnConfirmationChooser(null);
-		jfc.setSelectedFile(new File(IOHandler.VideoDirectory + name.replace(".pro", ".avi")));
+		jfc.setSelectedFile(new File(IOHandler.VideoDirectory() + name.replace(".pro", ".avi")));
 		//Limit to only project
 		jfc.setFileFilter(new FileNameExtensionFilter("Video File", ".avi"));
 		if (jfc.showSaveDialog(null) == JFileChooser.CANCEL_OPTION) return null; //they cancelled!
@@ -140,16 +151,10 @@ public class FileTools {
 	 */
 	public static File openMP3File() {
 		JFileChooser jfc = FileTools.ReturnConfirmationChooser(null);
-		jfc.setSelectedFile(new File(IOHandler.Mp3Directory + "Audio"));
-		if (lastDir != null) {
-			jfc.setCurrentDirectory(lastDir);
-		}
+		jfc.setSelectedFile(new File(IOHandler.Mp3Directory() + "Audio"));
 		//Limit to only mp3 now
 		jfc.setFileFilter(new FileNameExtensionFilter("MP3 File", "mp3"));
 		if (jfc.showOpenDialog(null) == JFileChooser.CANCEL_OPTION) return null; //they cancelled!
-		if (jfc.getSelectedFile() != null) {
-			lastDir = jfc.getSelectedFile().getParentFile();
-		}
 		return jfc.getSelectedFile();
 	}
 	/*
@@ -159,7 +164,10 @@ public class FileTools {
 	 */
 	public static JFileChooser ReturnConfirmationChooser(Boolean isVideo){
 		JFileChooser jfc = new JFileChooser(){
-		    @Override
+			private static final long serialVersionUID = 1L;
+			//Overrides the default behaviour of the FileChooser so that it
+			//asks the user whether or not they want to override the file (if applicable)
+			@Override
 		    public void approveSelection(){
 		        File f = getSelectedFile();
 		        if(f.exists() && getDialogType() == SAVE_DIALOG){
@@ -180,12 +188,13 @@ public class FileTools {
 		        super.approveSelection();
 		    }        
 		};
+		jfc.setAcceptAllFileFilterUsed(false);
 		String saveTo = "";
 		if (isVideo == null) return jfc; //generic file no extension
 		else if (isVideo){ //saving a video file, thus give it a default name
-			saveTo = IOHandler.VideoDirectory + "myVideo" + new File(IOHandler.VideoDirectory).listFiles().length + ".avi";
+			saveTo = IOHandler.VideoDirectory() + "myVideo" + new File(IOHandler.VideoDirectory()).listFiles().length + ".avi";
 		} else { // mp3
-			saveTo = IOHandler.Mp3Directory + "myAudio" + new File(IOHandler.Mp3Directory).listFiles().length + ".mp3";
+			saveTo = IOHandler.Mp3Directory() + "myAudio" + new File(IOHandler.Mp3Directory()).listFiles().length + ".mp3";
 		}
 		jfc.setSelectedFile(new File(saveTo));
 		return jfc;
@@ -200,7 +209,7 @@ public class FileTools {
 	public static void writeTextToFile(String text, String fileName) {
 		PrintWriter pw = null;
 		try {
-			(pw = new PrintWriter(IOHandler.TmpDirectory + fileName)).write(text);
+			(pw = new PrintWriter(IOHandler.TmpDirectory() + fileName)).write(text);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -224,6 +233,8 @@ public class FileTools {
 	 * @return
 	 */
 	public static boolean doYesNoDialog(String msg){
-		return (JOptionPane.showConfirmDialog(null, msg, "Warning!", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION);
+		Integer reponse = (JOptionPane.showConfirmDialog(null, msg, "Information required", JOptionPane.YES_NO_OPTION));
+		if (reponse == null) return false; //check for null first
+		return (reponse == JOptionPane.YES_OPTION); //else is it yes?
 	}
 }

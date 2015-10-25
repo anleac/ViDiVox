@@ -1,4 +1,4 @@
-package videos;
+package vidivox.projects;
 
 import java.io.File;
 import java.io.IOException;
@@ -6,11 +6,10 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
-import frames.AudioFrame;
-import frames.MainFrame;
-import tools.BashTools;
-import tools.FileTools;
-import tools.IOHandler;
+import vidivox.frames.AudioFrame;
+import vidivox.tools.BashTools;
+import vidivox.tools.FileTools;
+import vidivox.tools.IOHandler;
 
 /**
  * This is a class which holds everything related to the video project.
@@ -21,15 +20,16 @@ import tools.IOHandler;
 public class VidProject {
 	List<CustomAudio> addedAudio;
 	//a list of the added audio to a video.
-	String name, path;
+	String name, path = "";
 	boolean isSaved = false; //has the project been saved to a specific path yet?
-	
 	String videoPath = ""; //the path in which the projects ORIGINAL video is saved
 	
 	boolean created = false;
-	boolean pendingSaves = true; //to track whether all saves have been changed
+	boolean pendingSaves = false; //to track whether all saves have been changed
 	public void ChangesMade() {pendingSaves = true;} // changes made
+	public void ChangesUndo() {pendingSaves = false;} //force no changes
 	public boolean PendingSaves() {return pendingSaves;}
+	public void Created() {created = true;}
 	
 	boolean audioStripped = false; //whether or not the original audio of the video should be removed.
 	
@@ -62,8 +62,6 @@ public class VidProject {
 		AudioFrame.aFrame.updateAudio(); //update the audio
 	}
 	
-	
-	
 	public void StripAudio() { audioStripped = true; }
 	public boolean isStripped() {return audioStripped; }
 	
@@ -72,6 +70,7 @@ public class VidProject {
 	 */
 	public void createVideo(){
 		if (videoPath.equals("") == false){ //make sure there is one loaded
+			created = false;
 			File source = new File(videoPath), dest = new File(getCustomVideo() + "tmp");
 			if (dest.exists()) dest.delete();
 			try {
@@ -80,8 +79,6 @@ public class VidProject {
 			    e.printStackTrace();
 			}
 			BashTools.createVideo();
-			created = true;
-			MainFrame.mFrame.loadVideo();
 		}
 	}
 	
@@ -107,7 +104,7 @@ public class VidProject {
 	 * @return
 	 */
 	public String getCustomVideo(){
-		return IOHandler.TmpDirectory + name.replace(".pro", ".avi");
+		return IOHandler.TmpDirectory() + name.replace(".pro", ".avi");
 	}
 	
 	public boolean IsSaved() { return isSaved; }

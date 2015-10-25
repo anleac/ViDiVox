@@ -1,4 +1,4 @@
-package videos;
+package vidivox.projects;
 
 /**
  * A very simple class which holds a path, and the
@@ -12,6 +12,7 @@ public class CustomAudio {
 	long startTime; //end seconds
 	double duration;
 	boolean file = false;
+	String path = ""; //path of the mp3 file (if applicable)
 	/**
 	 * Constructor.
 	 * s contains all the valuable information, split via |
@@ -22,6 +23,9 @@ public class CustomAudio {
 		text = data[0]; 
 		startTime = Long.parseLong(data[1]); 
 		duration = Double.parseDouble(data[2]);
+		path = data[3];
+		if (data[3].contains(".mp3")) // its a file!
+			file = true;
 	}
 	
 	/**
@@ -29,11 +33,16 @@ public class CustomAudio {
 	 * Made in program
 	 * @param s
 	 */
-	public CustomAudio(String text, long start, double duration){
+	public CustomAudio(String text, long start, double duration, String path){
 		this.text = text; this.startTime = start; this.duration = duration;
+		if (path.contains(".mp3")) //its a file!
+			file = true;
+		this.path = path;
 	}
 	
 	public String getText() {return text;}
+	public String getPath() {return path;}
+	public boolean isFile() {return file;}
 	public Long getStart() {return startTime;}
 	public Double getDuration(){return duration;}
 	
@@ -42,6 +51,6 @@ public class CustomAudio {
 	 * @return
 	 */
 	public String getData(){
-		return text + "~~" + startTime + "~~" + getDuration();
+		return text + "~~" + startTime + "~~" + getDuration() + "~~" + path;
 	}
 }
