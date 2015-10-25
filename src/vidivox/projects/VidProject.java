@@ -62,6 +62,16 @@ public class VidProject {
 		AudioFrame.aFrame.updateAudio(); //update the audio
 	}
 	
+	/**
+	 * Returns the name of the video file
+	 * which is loaded into the project
+	 */
+	public String getVideoName(){
+		//this will be the last 'segment' of the path of the file
+		String[] data = getVideo().split(File.separator);
+		return data[data.length - 1];
+	}
+	
 	public void StripAudio() { audioStripped = true; }
 	public boolean isStripped() {return audioStripped; }
 	

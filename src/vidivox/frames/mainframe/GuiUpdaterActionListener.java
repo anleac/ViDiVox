@@ -1,9 +1,11 @@
 package vidivox.frames.mainframe;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import vidivox.frames.MainFrame;
+import vidivox.frames.ProgressBarFrame;
 import vidivox.tools.FileTools;
 
 /**
@@ -35,12 +37,13 @@ public class GuiUpdaterActionListener implements ActionListener {
 				MainFrame.mFrame.btnStop.setEnabled(vL);
 				MainFrame.mFrame.btnFastforward.setEnabled(vL);
 				MainFrame.mFrame.btnReverse.setEnabled(vL);
-				MainFrame.mFrame.btnAddCommentary.setEnabled(vL);
+				MainFrame.mFrame.btnAddCommentary.setEnabled(vL); //Make sure everything is disabled
+				//that needs to be when a video isnt loaded
 				MainFrame.mFrame.btnVolume.setEnabled(vL);
 				MainFrame.mFrame.TimeSlider().setEnabled(vL);
 				MainFrame.mFrame.VolSlider().setEnabled(vL && !MainFrame.mFrame.IsMuted());
 				MainFrame.mFrame.warning = (vL) ? "" : "No video loaded";
-				if (vL) {
+				if (vL) { //If the video is loaded
 					String t = "Playspeed: ";
 					if (MainFrame.mFrame.reverse)
 						t += '-';
@@ -55,7 +58,15 @@ public class GuiUpdaterActionListener implements ActionListener {
 					if (MainFrame.mFrame.Video().getMediaMeta().getLength() > 0) {
 						MainFrame.mFrame.TimeSlider().setValue(iPos);
 					}
+					MainFrame.mFrame.LblVideo().setText("Video loaded: " + MainFrame.mFrame.VProject().getVideoName());
+				}else{
+					//video isnt loaded!
+					MainFrame.mFrame.CurrentTime().setText("00:00"); //should always by this
+					MainFrame.mFrame.LengthTime().setText("00:00"); //and 'no' length
+					if (!ProgressBarFrame.pbFrame.isVisible()) MainFrame.mFrame.LblVideo().setText("Please load a video under the video menu above");
+					//as if it is visible, it means the swing worker is in progress.
 				}
+				MainFrame.mFrame.LblVideo().setForeground((vL) ? Color.BLACK : Color.RED);
 				if (MainFrame.mFrame.startVideo) {
 					MainFrame.mFrame.VProject().Created();
 					// theVideo.prepareMedia(project.getVideo()); //load new one

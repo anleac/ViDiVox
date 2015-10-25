@@ -78,6 +78,7 @@ public class ProgressBarFrame extends JFrame {
 	 */
 	public void reset(){
 		progressBar.setValue(0); //go back to the start!
+		lblGiveUsA.setText("Creating required audio files"); //default text
 	}
 }
 

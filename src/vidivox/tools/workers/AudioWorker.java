@@ -27,6 +27,7 @@ public class AudioWorker extends SwingWorker<Void, Integer[]>{
 		tmpAudioPath = IOHandler.TmpDirectory() + "tmp.mp3";
 		if (project.getAudio().size() > 0 || project.isStripped()){ //if its zero, it wont take any time
 			//therefore no need for a frame to breifly pop up
+			ProgressBarFrame.pbFrame.reset();
 			ProgressBarFrame.pbFrame.setLocationRelativeTo(null);
 			ProgressBarFrame.pbFrame.setVisible(true);
 		}

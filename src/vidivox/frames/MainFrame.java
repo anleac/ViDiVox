@@ -56,7 +56,7 @@ public class MainFrame extends JFrame {
 	public EmbeddedMediaPlayer Video() {return theVideo;}
 
 	public float videoPlayRate = 1.0f, positiveCap = 16.0f; // play rate of the video/cap
-	public final String DEFAULT_NAME = "ViDiVox"; // Default application name
+	public final String DEFAULT_NAME = "Vidivox"; // Default application name
 	public String warning = "No video loaded"; // this is a warning which will
 
 	private Component volalignment, timealignment;
@@ -90,6 +90,9 @@ public class MainFrame extends JFrame {
 	//gui buttons, need to be accesible as used in other classes
 	public final JButton btnStop = new JButton(""), btnReverse = new JButton(""),
 	btnFastforward = new JButton(""), btnAddCommentary = new JButton("Open Audio Panel");
+	private final JLabel lblVideoLoaded = new JLabel("Video Loaded:");
+	//Displays the video information to the user.
+	public JLabel LblVideo() {return lblVideoLoaded;}
 
 	/**
 	 * Pauses the video if its playing AND is loaded
@@ -106,8 +109,7 @@ public class MainFrame extends JFrame {
 	public void resetVideo() {
 		if (!project.getVideo().equals("")) {
 			timeSlider.setValue(0);
-			mFrame.setEnabled(false); // disable this until its completely
-										// finished
+			mFrame.setEnabled(false); // disable this until its completely finished
 			project.createVideo();
 		} else {
 			theVideo.release(); // reset everything
@@ -184,8 +186,7 @@ public class MainFrame extends JFrame {
 		menuBar.setMinimumSize(new Dimension(getWidth(), menuBar.getHeight()));
 		setJMenuBar(menuBar); // create the headers
 		JMenu mnFile = new JMenu("File"), mnVideo = new JMenu("Video");
-		menuBar.add(mnFile);
-		menuBar.add(mnVideo);
+		menuBar.add(mnFile);	menuBar.add(mnVideo);
 
 		// create items to go inside the JMenus
 		JMenuItem mnOpen = new JMenuItem("Open project"), mnNew = new JMenuItem(
@@ -196,8 +197,7 @@ public class MainFrame extends JFrame {
 				if (chosenFile != null) { // make sure file isnt null
 					String projectPath = chosenFile.getAbsolutePath();
 					CheckSaves();
-					project = IOHandler.LoadProject(projectPath); // load the
-																	// project
+					project = IOHandler.LoadProject(projectPath); //load in the project
 					if (!project.getVideo().equals("")) {
 						project.createVideo();
 					}
@@ -216,9 +216,7 @@ public class MainFrame extends JFrame {
 				project.saveProject();
 			}
 		});
-		mnFile.add(mnNew);
-		mnFile.add(mnOpen);
-		mnFile.add(mnSave); // Add them all
+		mnFile.add(mnNew);	mnFile.add(mnOpen);	mnFile.add(mnSave); // Add them all
 
 		// Now repeat for the 'video' menu bar
 		JMenuItem mnLoad = new JMenuItem("Load a video");
@@ -229,22 +227,17 @@ public class MainFrame extends JFrame {
 					project = new VidProject(IOHandler.GetNewName(), false);
 					// Check if they want to strip the current audio of the
 					// video
-					if (FileTools
-							.doYesNoDialog("Would you like to strip the current videos audio?")) {
+					if (FileTools.doYesNoDialog("Would you like to strip the current videos audio?")) {
 						project.StripAudio();
 					}
-					project.ChangesMade(); // new video, absolutely somethings
-											// changed!
-					project.setVideo(chosenFile.getAbsolutePath()); // set the
-																	// video
-																	// path.
+					project.ChangesMade(); // new video
+					project.setVideo(chosenFile.getAbsolutePath());
 					resetVideo();
 				}
 			}
 		});
 
 		mnExport.setEnabled(false); // start not enabled as no video loaded yet
-									// to export
 		mnExport.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String path = FileTools.PickVideoSave(project.getName());
@@ -400,6 +393,8 @@ public class MainFrame extends JFrame {
 		bottomRowButtonsPanel.add(btnFastforward); 	bottomRowButtonsPanel.add(horizontalStrut);
 		bottomRowButtonsPanel.add(btnAddCommentary);	bottomRowButtonsPanel.add(volalignment);
 		bottomRowButtonsPanel.add(btnVolume);	bottomRowButtonsPanel.add(volSlider);
+	
+	contentPane.add(lblVideoLoaded, BorderLayout.NORTH);
 		theVideo.setVolume(100);
 
 		Timer t = new Timer(25, new GuiUpdaterActionListener());
